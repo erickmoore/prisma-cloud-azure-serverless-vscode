@@ -1,0 +1,75 @@
+{
+  "name": "prismacloudfunction",
+  "displayName": "PrismaCloudFunction",
+  "description": "Deploy Prisma Cloud Serverless Defender",
+  "version": "0.0.1",
+  "publisher": "erickmoorepaloaltonetworks",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.runPrismaCloudScript",
+        "title": "Prisma Cloud Azure Serverless Defender"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Prisma Cloud Settings",
+      "properties": {
+        "prismaCloud.identity": {
+          "type": "string",
+          "default": "",
+          "description": "Prisma Cloud Identity"
+        },
+        "prismaCloud.secret": {
+          "type": "string",
+          "default": "",
+          "description": "Prisma Cloud Secret"
+        },
+        "prismaCloud.console": {
+          "type": "string",
+          "default": "",
+          "description": "Prisma Cloud Console URL"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "@typescript-eslint/parser": "^7.11.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "unzipper": "^0.12.1"
+  }
+}
