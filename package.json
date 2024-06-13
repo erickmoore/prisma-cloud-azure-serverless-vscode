@@ -1,5 +1,5 @@
 {
-  "name": "prismacloudfunction",
+  "name": "prismacloudserverlessdefenderazure",
   "displayName": "Prisma Cloud Serverless Defender (Azure)",
   "description": "Deploy Prisma Cloud Serverless Defender",
   "version": "0.0.1",
@@ -18,18 +18,19 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.runPrismaCloudScript",
+        "command": "extension.installServerlessDefender",
         "title": "Prisma Cloud Serverless Defender (Azure)"
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "Prisma Cloud Settings",
+      "title": "Prisma Cloud Serverless Defender (Azure) Settings",
       "properties": {
         "prismaCloud.identity": {
           "type": "string",
           "default": "",
-          "description": "Prisma Cloud Identity"
+          "description": "Prisma Cloud Identity",
+          "required": [ ]
         },
         "prismaCloud.secret": {
           "type": "string",

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export async function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('extension.runPrismaCloudScript', async () => {
+    let disposable = vscode.commands.registerCommand('extension.installServerlessDefender', async () => {
         try {
             const fetch = (await import('node-fetch')).default;
             const unzipper = (await import('unzipper')).default;
