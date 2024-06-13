@@ -141,3 +141,4 @@ dist
 
 # Built Visual Studio Code Extensions
 *.vsix
+twistlock_serverless_defender.zip

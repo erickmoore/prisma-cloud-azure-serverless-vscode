@@ -4,17 +4,42 @@ import * as path from 'path';
 
 export async function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('extension.installServerlessDefender', async () => {
+        const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+        statusBar.show();
+
         try {
             const fetch = (await import('node-fetch')).default;
             const unzipper = (await import('unzipper')).default;
 
-            const functionName = await vscode.window.showInputBox({ prompt: 'Enter function name' });
+            const functionName = await vscode.window.showInputBox({ prompt: 'Enter function name', placeHolder: 'myFunction123' });
 
             if (!functionName) {
                 vscode.window.showErrorMessage('Error: Function name cannot be empty.');
                 return;
             }
 
+            const workspaceFolders = vscode.workspace.workspaceFolders;
+
+            if (!workspaceFolders || workspaceFolders.length === 0) {
+                vscode.window.showErrorMessage('Error: No workspace folder is open.');
+                return;
+            }
+
+            const workspaceRoot = workspaceFolders[0].uri.fsPath;
+            const csprojFiles = fs.readdirSync(workspaceRoot).filter(file => file.endsWith('.csproj'));
+
+            if (csprojFiles.length === 0) {
+                vscode.window.showErrorMessage('No .csproj file found in the project directory.');
+                return;
+            }
+            
+            const selectedCsprojFile = await vscode.window.showQuickPick(csprojFiles, { placeHolder: 'Select the .csproj file to modify' });
+            if (!selectedCsprojFile) {
+                vscode.window.showErrorMessage('No .csproj file selected.');
+                return;
+            }
+            
+            const csprojPath = path.join(workspaceRoot, selectedCsprojFile);
             const config = vscode.workspace.getConfiguration('prismaCloud');
             const identity = config.get('identity') as string;
             const secret = config.get('secret') as string;
@@ -74,7 +99,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     vscode.window.showErrorMessage('Error: Failed to download defender bundle. ZIP file is empty.');
                     return;
                 } else {
-                    vscode.window.showInformationMessage('Defender bundle downloaded successfully.');
+                    statusBar.text = 'Defender bundle downloaded successfully.';
                 }
 
                 const extractPath = path.join(context.extensionPath, 'twistlock_temp');
@@ -86,7 +111,7 @@ export async function activate(context: vscode.ExtensionContext) {
                         vscode.window.showErrorMessage('Error: Extraction failed. No files found.');
                         return;
                     } else {
-                        vscode.window.showInformationMessage(`Extraction successful. Files extracted: ${files.join(', ')}`);
+                        statusBar.text = `Extraction successful. Files extracted: ${files.join(', ')}`;
                     }
                 } else {
                     vscode.window.showErrorMessage('Error: Extraction failed. Directory does not exist.');
@@ -132,6 +157,8 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
 
                 await vscode.env.clipboard.writeText(variableValue);
+                // Store the TW_POLICY value in the extension context
+                context.workspaceState.update('TW_POLICY', variableValue);
                 vscode.window.showInformationMessage('TW_POLICY variable value is copied to the clipboard.');
 
                 const csprojFiles = fs.readdirSync(workspaceRoot).filter(file => file.endsWith('.csproj'));
@@ -141,25 +168,27 @@ export async function activate(context: vscode.ExtensionContext) {
                     return;
                 }
 
-                const csprojFile = csprojFiles[0];
-                const csprojPath = path.join(workspaceRoot, csprojFile);
+                // const csprojFile = csprojFiles[0];
+                // const csprojPath = path.join(workspaceRoot, csprojFile);
                 let csprojContent = fs.readFileSync(csprojPath, 'utf8');
                 const insertIndex = csprojContent.lastIndexOf('</Project>');
                 const newContent = `
 <ItemGroup>
-<PackageReference Include="Twistlock" Version="${twistlockVersion}" />
-<TwistlockFiles Include="twistlock\\*" Exclude="twistlock\\twistlock.${twistlockVersion}.nupkg" />
+    <PackageReference Include="Twistlock" Version="${twistlockVersion}" />
+    <TwistlockFiles Include="twistlock\\*" Exclude="twistlock\\twistlock.${twistlockVersion}.nupkg" />
 </ItemGroup>
 <ItemGroup>
-<None Include="@(TwistlockFiles)" CopyToOutputDirectory="Always" LinkBase="twistlock\\" />
-</ItemGroup>`;
+    <None Include="@(TwistlockFiles)" CopyToOutputDirectory="Always" LinkBase="twistlock\\" />
+</ItemGroup>
+
+`;
                 csprojContent = csprojContent.slice(0, insertIndex) + newContent + csprojContent.slice(insertIndex);
                 fs.writeFileSync(csprojPath, csprojContent, 'utf8');
-                vscode.window.showInformationMessage(`Prisma Cloud Serverless Defender added to ${csprojFile}`);
+                vscode.window.showInformationMessage(`Prisma Cloud Serverless Defender added to ${selectedCsprojFile}`);
 
                 const nugetConfigPath = path.join(workspaceRoot, 'NuGet.Config');
-                const nugetConfigContent = `
-<?xml version="1.0" encoding="utf-8"?>
+                const nugetConfigContent = 
+`<?xml version="1.0" encoding="utf-8"?>
 <configuration>
     <packageSources>
         <clear />
@@ -170,16 +199,16 @@ export async function activate(context: vscode.ExtensionContext) {
 
                 if (!fs.existsSync(nugetConfigPath)) {
                     fs.writeFileSync(nugetConfigPath, nugetConfigContent, 'utf8');
-                    vscode.window.showInformationMessage('NuGet.Config created successfully.');
+                    statusBar.text = 'NuGet.Config created successfully.';
                 } else {
                     let existingNugetConfig = fs.readFileSync(nugetConfigPath, 'utf8');
                     if (!existingNugetConfig.includes('<add key="local-packages" value="./twistlock/" />')) {
                         existingNugetConfig = existingNugetConfig.replace('<packageSources>', `<packageSources>
                             <add key="local-packages" value="./twistlock/" />`);
                         fs.writeFileSync(nugetConfigPath, existingNugetConfig, 'utf8');
-                        vscode.window.showInformationMessage('NuGet.Config updated successfully.');
+                        statusBar.text = 'NuGet.Config updated successfully.';
                     } else {
-                        vscode.window.showInformationMessage('NuGet.Config already contains the local-packages source.');
+                        statusBar.text = 'NuGet.Config already contains the local-packages source.';
                     }
                 }
 
@@ -196,8 +225,22 @@ export async function activate(context: vscode.ExtensionContext) {
             } else {
                 vscode.window.showErrorMessage(`Error: ${JSON.stringify(error)}`);
             }
+        } finally {
+            statusBar.dispose();
         }
     });
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('extension.getTWPolicyValue', async () => {
+            const twPolicy = context.workspaceState.get('TW_POLICY');
+            if (twPolicy) {
+                await vscode.env.clipboard.writeText(twPolicy as string);
+                vscode.window.showInformationMessage('TW_POLICY variable value copied to clipboard.');
+            } else {
+                vscode.window.showErrorMessage('TW_POLICY value not found.');
+            }
+        })
+    );    
 
     context.subscriptions.push(disposable);
 }

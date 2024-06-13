@@ -19,8 +19,12 @@
     "commands": [
       {
         "command": "extension.installServerlessDefender",
-        "title": "Prisma Cloud Serverless Defender (Azure)"
-      }
+        "title": "Prisma Cloud Serverless (Azure): Install"
+      },
+      {
+        "command": "extension.getTWPolicyValue",
+        "title": "Prisma Cloud Serverless (Azure): Copy TW_POLICY Value"
+    }      
     ],
     "configuration": {
       "type": "object",
