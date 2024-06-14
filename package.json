@@ -7,7 +7,7 @@
   "description": "Deploy Prisma Cloud Serverless Defender",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.79.0"
+    "vscode": "^1.73.0"
   },
   "icon": "images/icon.png",
   "categories": [
@@ -20,31 +20,31 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.installServerlessDefender",
-        "title": "Prisma Cloud Serverless (Azure): Install"
+        "command": "extension.prisma-cloud-defender",
+        "title": "Prisma Cloud: Install Serverless Packages"
       },
       {
         "command": "extension.twPolicyValue",
-        "title": "Prisma Cloud Serverless (Azure): Get TW_POLICY environment variable",
-        "shortTitle": "Get TW_POLICY"
+        "title": "Prisma Cloud: App Service Variable"
       }
     ],
     "configuration": {
-      "title": "Prisma Cloud Serverless",
+      "title": "Prisma Cloud Serverless Defender (Azure)",
       "properties": {
-        "pcAuth.identity": {
+        "serverlessPrismaCloud.identity": {
           "type": "string",
           "default": "",
+          "title": "Prisma Cloud Key or User Name",
           "description": "Prisma Cloud Identity",
           "markdownDescription": "Prisma Cloud Identity"
         },
-        "pcAuth.secret": {
+        "serverlessPrismaCloud.secret": {
           "type": "string",
           "default": "",
           "description": "Prisma Cloud Secret",
           "markdownDescription": "Prisma Cloud Secret"
         },
-        "pcAuth.console": {
+        "serverlessPrismaCloud.console": {
           "type": "string",
           "default": "",
           "description": "Prisma Cloud Console URL",
@@ -65,7 +65,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.60.0",
+    "@types/vscode": "^1.73.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
     "@typescript-eslint/eslint-plugin": "^7.11.0",

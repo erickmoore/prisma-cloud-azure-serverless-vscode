@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { authenticate } from './utilities/auth';
 
 export async function activate(context: vscode.ExtensionContext) {
     let installDefender = vscode.commands.registerCommand('extension.prisma-cloud-defender', async () => {
@@ -11,10 +12,28 @@ export async function activate(context: vscode.ExtensionContext) {
             const fetch = (await import('node-fetch')).default;
             const unzipper = (await import('unzipper')).default;
 
-            const functionName = await vscode.window.showInputBox({ prompt: 'Enter function name', placeHolder: 'myFunction123' });
+            const config = vscode.workspace.getConfiguration('serverlessPrismaCloud');
+
+            const identity = config.get('identity') as string;
+            const secret = config.get('secret') as string;
+            const consolePath = config.get('console') as string;
+
+            if (!identity || !secret || !consolePath) {
+                const openSettings = await vscode.window.showWarningMessage('Prisma Cloud Serverless settings are not configured. Please configure them in the settings.', 'Open Settings');
+                if (openSettings === 'Open Settings') {
+                    await vscode.commands.executeCommand('workbench.action.openSettings', 'serverlessPrismaCloud');
+                }
+                return;
+            }
+
+            const functionName = await vscode.window.showInputBox({ 
+                prompt: 'Enter function name:', 
+                placeHolder: 'myFunction123', 
+                ignoreFocusOut: true, 
+                title: 'Step 1 of 2' 
+            });
 
             if (!functionName) {
-                vscode.window.showErrorMessage('Error: Function name cannot be empty.');
                 return;
             }
 
@@ -33,24 +52,18 @@ export async function activate(context: vscode.ExtensionContext) {
                 return;
             }
             
-            const selectedCsprojFile = await vscode.window.showQuickPick(csprojFiles, { placeHolder: 'Select the .csproj file to modify' });
+            const quickPickItems = csprojFiles.map(file => ({
+                label: `$(file-code) ${file}`,
+                description: ''
+            }));
+
+            const selectedCsprojFile = await vscode.window.showQuickPick(quickPickItems, { placeHolder: 'Select the .csproj file to modify', ignoreFocusOut: true, title: 'Step 2 of 2' });
             if (!selectedCsprojFile) {
-                vscode.window.showErrorMessage('No .csproj file selected.');
+                vscode.window.showInformationMessage('No .csproj file selected.');
                 return;
             }
-            
-            const config = vscode.workspace.getConfiguration('pcAuth');
 
-            const identity = config.get('identity') as string;
-            const secret = config.get('secret') as string;
-            const consolePath = config.get('console') as string;
-
-            const csprojPath = path.join(workspaceRoot, selectedCsprojFile);
-
-            if (!identity || !secret || !consolePath) {
-                vscode.window.showErrorMessage('Error: Please configure Prisma Cloud settings in the settings.');
-                return;
-            }
+            const csprojPath = path.join(workspaceRoot, selectedCsprojFile.label.replace('$(file-code) ', ''));
 
             const authEndpoint = `${consolePath}/api/v32.06/authenticate`;
             const bundleEndpoint = `${consolePath}/api/v1/defenders/serverless/bundle`;
@@ -170,8 +183,16 @@ export async function activate(context: vscode.ExtensionContext) {
                     return;
                 }
 
-                // const csprojFile = csprojFiles[0];
-                // const csprojPath = path.join(workspaceRoot, csprojFile);
+                const azureExtension = vscode.extensions.getExtension('ms-azuretools.vscode-azurefunctions'); // Replace with the actual extension ID
+                if (!azureExtension) {
+                    vscode.window.showErrorMessage('Azure Functions extension is not installed.');
+                    return;
+                }
+            
+                if (!azureExtension.isActive) {
+                    await azureExtension.activate();
+                }                
+
                 let csprojContent = fs.readFileSync(csprojPath, 'utf8');
                 const insertIndex = csprojContent.lastIndexOf('</Project>');
                 const newContent = `
