@@ -1,11 +1,13 @@
 {
-  "name": "prismacloudserverlessdefenderazure",
+  "name": "prisma-cloud-defender",
+  "publisher": "ErickMoore",
+  "preview": true,
+  "private": true,
   "displayName": "Prisma Cloud Serverless Defender (Azure)",
   "description": "Deploy Prisma Cloud Serverless Defender",
   "version": "0.0.1",
-  "publisher": "Erick Moore",
   "engines": {
-    "vscode": "^1.60.0"
+    "vscode": "^1.79.0"
   },
   "icon": "images/icon.png",
   "categories": [
@@ -22,29 +24,31 @@
         "title": "Prisma Cloud Serverless (Azure): Install"
       },
       {
-        "command": "extension.getTWPolicyValue",
-        "title": "Prisma Cloud Serverless (Azure): Copy TW_POLICY Value"
-    }      
+        "command": "extension.twPolicyValue",
+        "title": "Prisma Cloud Serverless (Azure): Get TW_POLICY environment variable",
+        "shortTitle": "Get TW_POLICY"
+      }
     ],
     "configuration": {
-      "type": "object",
-      "title": "Prisma Cloud Serverless Defender (Azure) Settings",
+      "title": "Prisma Cloud Serverless",
       "properties": {
-        "prismaCloud.identity": {
+        "pcAuth.identity": {
           "type": "string",
           "default": "",
           "description": "Prisma Cloud Identity",
-          "required": [ ]
+          "markdownDescription": "Prisma Cloud Identity"
         },
-        "prismaCloud.secret": {
+        "pcAuth.secret": {
           "type": "string",
           "default": "",
-          "description": "Prisma Cloud Secret"
+          "description": "Prisma Cloud Secret",
+          "markdownDescription": "Prisma Cloud Secret"
         },
-        "prismaCloud.console": {
+        "pcAuth.console": {
           "type": "string",
           "default": "",
-          "description": "Prisma Cloud Console URL"
+          "description": "Prisma Cloud Console URL",
+          "markdownDescription": "Prisma Cloud Console URL"
         }
       }
     }

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export async function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('extension.installServerlessDefender', async () => {
+    let installDefender = vscode.commands.registerCommand('extension.prisma-cloud-defender', async () => {
         const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
         statusBar.show();
 
@@ -39,11 +39,13 @@ export async function activate(context: vscode.ExtensionContext) {
                 return;
             }
             
-            const csprojPath = path.join(workspaceRoot, selectedCsprojFile);
-            const config = vscode.workspace.getConfiguration('prismaCloud');
+            const config = vscode.workspace.getConfiguration('pcAuth');
+
             const identity = config.get('identity') as string;
             const secret = config.get('secret') as string;
             const consolePath = config.get('console') as string;
+
+            const csprojPath = path.join(workspaceRoot, selectedCsprojFile);
 
             if (!identity || !secret || !consolePath) {
                 vscode.window.showErrorMessage('Error: Please configure Prisma Cloud settings in the settings.');
@@ -231,7 +233,7 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('extension.getTWPolicyValue', async () => {
+        vscode.commands.registerCommand('extension.twPolicyValue', async () => {
             const twPolicy = context.workspaceState.get('TW_POLICY');
             if (twPolicy) {
                 await vscode.env.clipboard.writeText(twPolicy as string);
@@ -240,9 +242,9 @@ export async function activate(context: vscode.ExtensionContext) {
                 vscode.window.showErrorMessage('TW_POLICY value not found.');
             }
         })
-    );    
+    );
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(installDefender);
 }
 
 export function deactivate() {}
