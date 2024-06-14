@@ -24,9 +24,13 @@
         "title": "Prisma Cloud: Install Serverless Packages"
       },
       {
+        "command": "extension.create-environment-variable",
+        "title": "Prisma Cloud: Create App Service Variable"
+      },
+      {
         "command": "extension.get-environment-variable",
-        "title": "Prisma Cloud: App Service Variable"
-      }
+        "title": "Prisma Cloud: Get App Service Variable"
+      }      
     ],
     "configuration": {
       "title": "Prisma Cloud Serverless Defender (Azure)",

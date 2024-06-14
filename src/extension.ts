@@ -1,15 +1,18 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-import { getEnvironmentVariable } from './commands/get-environment-variable/get-environment-variable';
+import { createEnvironmentVariable } from './commands/create-environment-variable';
+import { copyEnvironmentVariable } from './commands/get-environment-variable';
+import { installServerlessDefender } from './commands/install-defender';
 
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
     context.subscriptions.push(
-        vscode.commands.registerTextEditorCommand('get-environment-variable', getEnvironmentVariable())
+        vscode.commands.registerCommand('get-environment-variable', createEnvironmentVariable),
+        vscode.commands.registerCommand('extension.get-environment-variable', copyEnvironmentVariable),
+        vscode.commands.registerCommand('extension.install-defender', installServerlessDefender)
     );
 }
 
 export function deactivate() {}
+
 
 // import * as vscode from 'vscode';
 // import * as fs from 'fs';
