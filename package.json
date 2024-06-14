@@ -20,11 +20,11 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.prisma-cloud-defender",
+        "command": "extension.install-defender",
         "title": "Prisma Cloud: Install Serverless Packages"
       },
       {
-        "command": "extension.twPolicyValue",
+        "command": "extension.get-environment-variable",
         "title": "Prisma Cloud: App Service Variable"
       }
     ],
