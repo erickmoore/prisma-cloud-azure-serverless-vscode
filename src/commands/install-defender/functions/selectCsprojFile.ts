@@ -3,7 +3,15 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-export async function selectCsprojFile(workspaceRoot: string) {
+export async function selectCsprojFile() {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+
+    if (!workspaceFolders || workspaceFolders.length === 0) {
+        vscode.window.showErrorMessage('Error: No workspace folder is open.');
+        return;
+    }
+
+    const workspaceRoot = workspaceFolders[0].uri.fsPath;
     const csprojFiles = fs.readdirSync(workspaceRoot).filter(file => file.endsWith('.csproj'));
 
     if (csprojFiles.length === 0) {
@@ -29,6 +37,6 @@ export async function selectCsprojFile(workspaceRoot: string) {
     
     const selectedFile = path.join(workspaceRoot, selectedCsprojFile.label.replace('$(file-code) ', ''));
 
-    return selectedFile;
+    return { selectedFile, workspaceRoot };
 
 }

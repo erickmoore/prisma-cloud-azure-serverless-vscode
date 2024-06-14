@@ -1,4 +1,3 @@
-// src/commands/auth.ts
 import fetch from 'node-fetch';
 
 export async function authenticate(consolePath: string, identity: string, secret: string) {
