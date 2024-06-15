@@ -16,5 +16,5 @@ export async function updateCsprojFile(csprojFile: string, twistlockVersion: str
 `;
     csprojContent = csprojContent.slice(0, insertIndex) + newContent + csprojContent.slice(insertIndex);
     fs.writeFileSync(csprojFile, csprojContent, 'utf8');
-    vscode.window.showInformationMessage(`Prisma Cloud Serverless Defender added to ${csprojFile}`);
+    vscode.window.showInformationMessage(`Serverless Defender package references added to ${csprojFile}`);
 }

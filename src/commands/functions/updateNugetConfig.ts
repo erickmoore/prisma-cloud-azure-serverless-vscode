@@ -16,7 +16,7 @@ export async function updateNugetConfig(workspaceRoot: string) {
 
     if (!fs.existsSync(nugetConfigPath)) {
         fs.writeFileSync(nugetConfigPath, nugetConfigContent, 'utf8');
-        vscode.window.showInformationMessage('NuGet.Config created successfully.');
+        //vscode.window.showInformationMessage('NuGet.Config created successfully.');
     } else {
         let existingNugetConfig = fs.readFileSync(nugetConfigPath, 'utf8');
         if (!existingNugetConfig.includes('<add key="local-packages" value="./twistlock/" />')) {
@@ -26,7 +26,7 @@ export async function updateNugetConfig(workspaceRoot: string) {
     <add key="local-packages" value="./twistlock/" />
 `);
             fs.writeFileSync(nugetConfigPath, existingNugetConfig, 'utf8');
-            vscode.window.showInformationMessage('NuGet.Config updated successfully.');
+            //vscode.window.showInformationMessage('NuGet.Config updated successfully.');
         } else {
             vscode.window.showInformationMessage('NuGet.Config already contains the local-packages source.');
         }
