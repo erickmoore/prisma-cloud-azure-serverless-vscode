@@ -4,7 +4,6 @@ import { selectCsprojFile } from './functions/selectCsprojFile';
 import { updateCsprojFile } from './functions/updateCsprojFile';
 import { updateNugetConfig } from './functions/updateNugetConfig';
 import { getConfig } from '../utilities/getConfig';
-//import { installDefender } from './functions/defender';
 import { installDefender, InstallDefenderConfig } from './functions/installDefender';
 import { createEnvironmentVariable } from './create-environment-variable';
 
@@ -24,18 +23,10 @@ export async function installServerlessDefender(context: vscode.ExtensionContext
     const installDefenderConfig: InstallDefenderConfig = {
         consolePath: config.consolePath,
         token,
-        context: context,
-        workspaceRoot: selectedCsprojFile.workspaceRoot
+        context: context
     };
 
     const twistlockVersion = await installDefender(installDefenderConfig); if (!twistlockVersion) { return; };
-
-    // const twistlockVersion = await installDefender(
-    //     config.consolePath, 
-    //     token, 
-    //     context, 
-    //     selectedCsprojFile.workspaceRoot); 
-    // if (!twistlockVersion) { return ;};
 
     // Update Csproj with Defender Version
     if (selectedCsprojFile) { await updateCsprojFile(selectedCsprojFile.selectedFile, twistlockVersion); };

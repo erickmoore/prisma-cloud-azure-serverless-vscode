@@ -7,11 +7,18 @@ export interface InstallDefenderConfig {
     consolePath: string;
     token: string;
     context: vscode.ExtensionContext;
-    workspaceRoot: string;
 }
 
 export async function installDefender(config: InstallDefenderConfig) {
-    const { consolePath, token, context, workspaceRoot } = config;
+    const { consolePath, token, context } = config;
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+
+    if (!workspaceFolders || workspaceFolders.length === 0) {
+        vscode.window.showErrorMessage('Error: No workspace folder is open.');
+        return;
+    }
+
+    const workspaceRoot = workspaceFolders[0].uri.fsPath;
 
     try {
         // Step 1: Download Defender Bundle
@@ -86,6 +93,6 @@ export async function installDefender(config: InstallDefenderConfig) {
 
     } catch (error) {
         //vscode.window.showErrorMessage(`Error during Defender installation: ${error.message}`);
-        console.error(error);
+        //console.error(error);
     }
 }
