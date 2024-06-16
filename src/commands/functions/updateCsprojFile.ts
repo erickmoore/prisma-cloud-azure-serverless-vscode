@@ -13,7 +13,8 @@ https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-se
 <ItemGroup>
     <None Include="@(TwistlockFiles)" CopyToOutputDirectory="Always" LinkBase="twistlock\\" />
 </ItemGroup>
-<!-- End of Prisma Cloud protected section --> -->`;
+<!-- End of Prisma Cloud protected section --> -->
+`;
 
     const successMessage = `Serverless Defender package references added to ${csprojFile}`;
     await updateConfig({ file: csprojFile, searchString, insertAbove, newContent, successMessage } as UpdateConfigFile);

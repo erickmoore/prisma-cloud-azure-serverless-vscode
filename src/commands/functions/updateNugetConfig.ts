@@ -16,6 +16,7 @@ export async function updateNugetConfig() {
         <add key="local-packages" value="./twistlock/" />
         <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
     </packageSources>
-    <!-- End of Prisma Cloud protected section --> -->`;
+    <!-- End of Prisma Cloud protected section --> -->
+    `;
     await updateConfig({ file: nugetFile, searchString, insertAbove, newContent } as UpdateConfigFile);
 }
