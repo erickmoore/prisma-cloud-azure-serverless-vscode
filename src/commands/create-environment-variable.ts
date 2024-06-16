@@ -3,17 +3,16 @@ import { authenticate, AuthenticateConfig } from '../utilities/getAuthToken';
 import { getExtensionSettings } from '../utilities/getExtensionSettings';
 
 export async function createEnvironmentVariable(context: vscode.ExtensionContext) {
-    //const config = await getExtensionSettings(); if (!config) { return; }
     const prismaCloud = await getExtensionSettings(); if (!prismaCloud) { return; };
+    const { consolePath, identity, secret } = prismaCloud;
 
     const authConfig: AuthenticateConfig = {
-        consolePath: prismaCloud.consolePath,
-        identity: prismaCloud.identity,
-        secret: prismaCloud.secret
+        consolePath: consolePath,
+        identity: identity,
+        secret: secret
     };
 
-    const consolePath = authConfig.consolePath;
-    const variableEndpoint = `${consolePath}/api/v1/policies/runtime/serverless/encode`;
+    const appServiceVariableGenerator = `${consolePath}/api/v1/policies/runtime/serverless/encode`;
     const consoleUrl = new URL(consolePath).hostname;
     const headers = { 'Content-Type': 'application/json; charset=UTF-8' };
 
@@ -31,13 +30,15 @@ export async function createEnvironmentVariable(context: vscode.ExtensionContext
     };
 
     const token = await authenticate(authConfig);
-    const variableResponse = await fetch(variableEndpoint, {
+
+    const variableResponse = await fetch(appServiceVariableGenerator, {
         method: 'POST',
         headers: { ...headers, authorization: `Bearer ${token}` },
         body: JSON.stringify(functionInfo)
     });
 
     const variableData = await variableResponse.json() as { data: string };
+
     const variableValue = variableData.data;
 
     if (!variableValue) {
@@ -47,5 +48,5 @@ export async function createEnvironmentVariable(context: vscode.ExtensionContext
 
     await vscode.env.clipboard.writeText(variableValue);
     context.workspaceState.update('TW_POLICY', variableValue);
-    vscode.window.showInformationMessage('TW_POLICY variable value is copied to the clipboard.');
+    vscode.window.showInformationMessage('TW_POLICY variable value copied to clipboard.');
 }

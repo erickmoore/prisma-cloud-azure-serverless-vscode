@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import getWorkspaceRoot from '../../utilities/getWorkspaceRoot';
-import { get } from 'http';
 
 export async function selectCsprojFile() {
     const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }

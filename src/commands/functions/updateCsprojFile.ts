@@ -1,9 +1,8 @@
-import * as fs from 'fs';
-import * as vscode from 'vscode';
+import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
 
 export async function updateCsprojFile(csprojFile: string, twistlockVersion: string) {
-    let csprojContent = fs.readFileSync(csprojFile, 'utf8');
-    const insertIndex = csprojContent.lastIndexOf('</Project>');
+    const searchString = `<PackageReference Include="Twistlock" Version="${twistlockVersion}" />`;
+    const insertAbove = '</Project>';
     const newContent = `
 <ItemGroup>
     <PackageReference Include="Twistlock" Version="${twistlockVersion}" />
@@ -14,7 +13,7 @@ export async function updateCsprojFile(csprojFile: string, twistlockVersion: str
 </ItemGroup>
 
 `;
-    csprojContent = csprojContent.slice(0, insertIndex) + newContent + csprojContent.slice(insertIndex);
-    fs.writeFileSync(csprojFile, csprojContent, 'utf8');
-    vscode.window.showInformationMessage(`Serverless Defender package references added to ${csprojFile}`);
+    const successMessage = `Serverless Defender package references added to ${csprojFile}`;
+
+    await updateConfig({ file: csprojFile, searchString, insertAbove, newContent, successMessage } as UpdateConfigFile);
 }
