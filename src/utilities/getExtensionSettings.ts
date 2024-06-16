@@ -1,7 +1,7 @@
 // src/commands/config.ts
 import * as vscode from 'vscode';
 
-export async function getConfig() {
+export async function getExtensionSettings() {
     const config = vscode.workspace.getConfiguration('serverlessPrismaCloud');
     const identity = config.get('identity') as string;
     const secret = config.get('secret') as string;

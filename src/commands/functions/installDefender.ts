@@ -2,23 +2,20 @@ import fetch from 'node-fetch';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import getWorkspaceRoot from '../../utilities/getWorkspaceRoot';
+import { updateCsprojFile } from './updateCsprojFile';
+import { updateNugetConfig } from './updateNugetConfig';
 
 export interface InstallDefenderConfig {
     consolePath: string;
     token: string;
     context: vscode.ExtensionContext;
+    csprojFile: string;
 }
 
-export async function installDefender(config: InstallDefenderConfig) {
-    const { consolePath, token, context } = config;
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-
-    if (!workspaceFolders || workspaceFolders.length === 0) {
-        vscode.window.showErrorMessage('Error: No workspace folder is open.');
-        return;
-    }
-
-    const workspaceRoot = workspaceFolders[0].uri.fsPath;
+export async function installDefender(config: InstallDefenderConfig){
+    const { consolePath, token, context, csprojFile } = config;
+    const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }
 
     try {
         // Step 1: Download Defender Bundle
@@ -88,8 +85,10 @@ export async function installDefender(config: InstallDefenderConfig) {
 
         const nupkgFile = nupkgFiles[0];
         const twistlockVersion = nupkgFile.split('.').slice(-4, -1).join('.');
+    
+        await updateCsprojFile(csprojFile, twistlockVersion);
+        await updateNugetConfig();
 
-        return twistlockVersion;
 
     } catch (error) {
         //vscode.window.showErrorMessage(`Error during Defender installation: ${error.message}`);

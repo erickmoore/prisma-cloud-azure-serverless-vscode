@@ -1,10 +1,18 @@
 import * as vscode from 'vscode';
-import { authenticate } from '../utilities/getAuthToken';
-import { getConfig } from '../utilities/getConfig';
+import { authenticate, AuthenticateConfig } from '../utilities/getAuthToken';
+import { getExtensionSettings } from '../utilities/getExtensionSettings';
 
 export async function createEnvironmentVariable(context: vscode.ExtensionContext) {
-    const config = await getConfig(); if (!config) { return; }
-    const consolePath = config.consolePath;
+    //const config = await getExtensionSettings(); if (!config) { return; }
+    const prismaCloud = await getExtensionSettings(); if (!prismaCloud) { return; };
+
+    const authConfig: AuthenticateConfig = {
+        consolePath: prismaCloud.consolePath,
+        identity: prismaCloud.identity,
+        secret: prismaCloud.secret
+    };
+
+    const consolePath = authConfig.consolePath;
     const variableEndpoint = `${consolePath}/api/v1/policies/runtime/serverless/encode`;
     const consoleUrl = new URL(consolePath).hostname;
     const headers = { 'Content-Type': 'application/json; charset=UTF-8' };
@@ -13,7 +21,7 @@ export async function createEnvironmentVariable(context: vscode.ExtensionContext
         prompt: 'Enter function name:', 
         placeHolder: 'myFunction123', 
         ignoreFocusOut: true, 
-        title: 'Step 1 of 2' 
+        title: 'Generate App Service Environment Variable' 
     }); if (!functionName) { return; }
 
     const functionInfo = {
@@ -22,7 +30,7 @@ export async function createEnvironmentVariable(context: vscode.ExtensionContext
         provider: 'azure'
     };
 
-    const token = await authenticate(config.consolePath, config.identity, config.secret);
+    const token = await authenticate(authConfig);
     const variableResponse = await fetch(variableEndpoint, {
         method: 'POST',
         headers: { ...headers, authorization: `Bearer ${token}` },

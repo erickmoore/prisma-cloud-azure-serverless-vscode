@@ -2,16 +2,11 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import getWorkspaceRoot from '../../utilities/getWorkspaceRoot';
+import { get } from 'http';
 
 export async function selectCsprojFile() {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-
-    if (!workspaceFolders || workspaceFolders.length === 0) {
-        vscode.window.showErrorMessage('Error: No workspace folder is open.');
-        return;
-    }
-
-    const workspaceRoot = workspaceFolders[0].uri.fsPath;
+    const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }
     const csprojFiles = fs.readdirSync(workspaceRoot).filter(file => file.endsWith('.csproj'));
 
     if (csprojFiles.length === 0) {
@@ -25,9 +20,9 @@ export async function selectCsprojFile() {
     }));
 
     const selectedCsprojFile = await vscode.window.showQuickPick(quickPickItems, { 
-        placeHolder: 'Select the .csproj file to modify', 
+        placeHolder: 'add Prisma Cloud package reference to .csproj file', 
         ignoreFocusOut: true, 
-        title: 'Step 2 of 2' 
+        title: 'Select .csproj file' 
     });
 
     if (!selectedCsprojFile) {

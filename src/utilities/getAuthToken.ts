@@ -1,9 +1,15 @@
 import fetch from 'node-fetch';
 
-export async function authenticate(consolePath: string, identity: string, secret: string) {
-    const authEndpoint = `${consolePath}/api/v32.06/authenticate`;
+export interface AuthenticateConfig {
+    consolePath: string;
+    identity: string;
+    secret: string;
+}
+
+export async function authenticate(config: AuthenticateConfig): Promise<string> {
+    const authEndpoint = `${config.consolePath}/api/v32.06/authenticate`;
     const headers = { 'Content-Type': 'application/json; charset=UTF-8' };
-    const payload = { username: identity, password: secret };
+    const payload = { username: config.identity, password: config.secret };
 
     const response = await fetch(authEndpoint, {
         method: 'POST',

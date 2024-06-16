@@ -1,36 +1,33 @@
 import * as vscode from 'vscode';
-import { authenticate } from '../utilities/getAuthToken';
+import { authenticate, AuthenticateConfig } from '../utilities/getAuthToken';
 import { selectCsprojFile } from './functions/selectCsprojFile';
-import { updateCsprojFile } from './functions/updateCsprojFile';
-import { updateNugetConfig } from './functions/updateNugetConfig';
-import { getConfig } from '../utilities/getConfig';
+import { getExtensionSettings } from '../utilities/getExtensionSettings';
 import { installDefender, InstallDefenderConfig } from './functions/installDefender';
 import { createEnvironmentVariable } from './create-environment-variable';
 
 export async function installServerlessDefender(context: vscode.ExtensionContext) {
+    const prismaCloud = await getExtensionSettings(); if (!prismaCloud) { return; };
 
-    // Read VS Code Config Settings
-    const config = await getConfig(); if (!config) { return; };
-
-    // Create Defender App Service Environment Variable
     await createEnvironmentVariable(context);
 
     // Prompt for Csproj File
-    const selectedCsprojFile = await selectCsprojFile(); if (!selectedCsprojFile) { return; };
+    const project = await selectCsprojFile(); if (!project) { return; };
 
-    // Install Defender and Return Current Version
-    const token = await authenticate(config.consolePath, config.identity, config.secret);
-    const installDefenderConfig: InstallDefenderConfig = {
-        consolePath: config.consolePath,
-        token,
-        context: context
+    const authConfig: AuthenticateConfig = {
+        consolePath: prismaCloud.consolePath,
+        identity: prismaCloud.identity,
+        secret: prismaCloud.secret
     };
 
-    const twistlockVersion = await installDefender(installDefenderConfig); if (!twistlockVersion) { return; };
+    const token = await authenticate(authConfig);
 
-    // Update Csproj with Defender Version
-    if (selectedCsprojFile) { await updateCsprojFile(selectedCsprojFile.selectedFile, twistlockVersion); };
+    const installDefenderConfig: InstallDefenderConfig = {
+        consolePath: prismaCloud.consolePath,
+        token,
+        context: context,
+        csprojFile: project.selectedFile
+    };
 
-    // Update/Create NuGet.Config
-    await updateNugetConfig(selectedCsprojFile.workspaceRoot);
+    await installDefender(installDefenderConfig);
+
 }
