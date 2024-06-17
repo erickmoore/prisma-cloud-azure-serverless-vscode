@@ -1,9 +1,20 @@
 # Change Log
 
-All notable changes to the "prismaclouddefender" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
+## [0.0.1]
 
 - Initial release
+
+### Added
+
+- Make request to configured console endpoint to download package files
+- Make request to endpoint to generate TW_POLICY variable
+- Extract and process package file to pull current defender version
+- Prompt for .csproj file to insert package dependencies
+- Create or modify NuGet.config file to inject local package dependencies
+
+---
+## [0.0.2]
+
+### Fixed
+
+- Corrected formatting issues with NuGet.Config and csproj files
