@@ -15,8 +15,7 @@ export async function updateCsprojFile(csprojFile: string, twistlockVersion: str
     </ItemGroup>
     <!-- End of Prisma Cloud protected section --> -->
 `;
-    const newFile = '';
+    const newFile = '<!-- Please create a new project before deploying a Prisma Cloud Defender --> -->';
 
-    const successMessage = `Serverless Defender package references added to ${csprojFile}`;
-    await updateConfig({ file: csprojFile, searchString, insertAbove, newContent, successMessage, newFile } as UpdateConfigFile);
+    await updateConfig({ file: csprojFile, searchString, insertAbove, newContent, newFile } as UpdateConfigFile);
 }

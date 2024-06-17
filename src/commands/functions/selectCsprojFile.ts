@@ -30,5 +30,5 @@ export async function selectCsprojFile() {
     }
     
     const selectedFile = path.join(workspaceRoot, selectedCsprojFile.label.replace('$(file-code) ', ''));
-    return { selectedFile, workspaceRoot };
+    return selectedFile as string;
 }
