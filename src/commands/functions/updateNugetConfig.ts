@@ -20,7 +20,7 @@ export async function updateNugetConfig() {
     `;
     const newFile = `<?xml version="1.0" encoding="utf-8"?>
 <configuration>
-    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment.
+    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment. -->
     <!-- https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/install/deploy-defender/serverless/serverless -->
     <!-- Start of Prisma Cloud protected section -->
     <packageSources>
