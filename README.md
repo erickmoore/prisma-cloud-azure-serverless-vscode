@@ -1,5 +1,4 @@
 # Prisma Cloud VSCode Azure Serverless Extension
----
 
 ## Overview
 
@@ -10,7 +9,10 @@ You will be prompted to enter the function name, and this is used to generate an
 
 ## Requirements
 
-Active Prisma Cloud subscription
+- Active Prisma Cloud subscription
+- Credentials with the ability to create and download serverless package binaries
+- Path to Prisma Cloud runtime console
+    - > Runtime Security > Manage > System > Utilities, scroll to the bottom to retrieve console URL. 
 
 ## Extension Settings
 
@@ -18,9 +20,9 @@ This extension contributes the following settings:
 
  | id |  setting  | type | description |
  |----|-----------|------|-------------|
- | serverlessPrismaCloud.console | Prisma Cloud Console URL | `string` | 
- | serverlessPrismaCloud.identity | Prisma Cloud Identity | `string` | 
- | serverlessPrismaCloud.secret | Prisma Cloud Secret | `string` | 
+ | serverlessPrismaCloud.console | Prisma Cloud Console URL | `string` | Console URL used to authenticate against your environment.
+ | serverlessPrismaCloud.identity | Prisma Cloud Identity | `string` | Username or access key with the ability to download serverless packages from console.
+ | serverlessPrismaCloud.secret | Prisma Cloud Secret | `string` | Password for username or access key above
 
 ## Known Issues
 
