@@ -30,12 +30,12 @@ This has only been tested with .NET 8 serverless function deployed using the Azu
 We do not prompt for a NuGet.Config currently and instead will either edit one in the root or create a new file in the root.
 We do not look for the .csproj file except in the root directory.
 
-
 ## Look Ahead
 
 Please make feature requests on the GitHub repo here. These are the currently planned updates.
 
-- Support for App-Embeded Deployment
+- Creation of sample functions for testing
+- Support for App-Embeded Defender
 - VS Code Side Pannel Support
     - View serverless audit logs for protected functions in your project
     - View protected and un-protected functions in a project
