@@ -129,6 +129,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Built Visual Studio Code Extensions
+*.vsix
+twistlock_serverless_defender.zip
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -138,7 +142,3 @@ dist
 
 # Local History for Visual Studio Code
 .history/
-
-# Built Visual Studio Code Extensions
-*.vsix
-twistlock_serverless_defender.zip
