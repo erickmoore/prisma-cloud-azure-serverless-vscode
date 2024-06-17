@@ -7,7 +7,7 @@ import { createEnvironmentVariable } from './create-environment-variable';
 
 export async function installServerlessDefender(context: vscode.ExtensionContext) {
     const prismaCloud = await getExtensionSettings(); if (!prismaCloud) { return; };
-    const project = await selectCsprojFile(); if (!project) { return; };
+    const projectFile = await selectCsprojFile(); if (!projectFile) { return; };
 
     const { consolePath, identity, secret } = prismaCloud;
     const authConfig: AuthenticateConfig = {
@@ -21,7 +21,7 @@ export async function installServerlessDefender(context: vscode.ExtensionContext
         consolePath: prismaCloud.consolePath,
         token: token,
         context: context,
-        csprojFile: project.selectedFile
+        csprojFile: projectFile
     };
 
     await installDefender(installDefenderConfig);
