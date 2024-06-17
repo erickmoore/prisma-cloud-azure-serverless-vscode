@@ -18,5 +18,17 @@ export async function updateNugetConfig() {
     </packageSources>
     <!-- End of Prisma Cloud protected section --> -->
     `;
-    await updateConfig({ file: nugetFile, searchString, insertAbove, newContent } as UpdateConfigFile);
+    const newFile = `<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment.
+    https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/install/deploy-defender/serverless/serverless -->
+    <!-- Start of Prisma Cloud protected section --> -->
+    <packageSources>
+    <clear />
+        <add key="local-packages" value="./twistlock/" />
+        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+    </packageSources>
+    <!-- End of Prisma Cloud protected section --> -->        
+</configuration>`;
+    await updateConfig({ file: nugetFile, searchString, insertAbove, newContent, newFile: newFile } as UpdateConfigFile);
 }

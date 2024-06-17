@@ -8,20 +8,21 @@ export interface UpdateConfigFile {
     insertAbove: string;
     newContent: string;
     message?: string;
+    newFile: string;
 }
 
 export async function updateConfig(config: UpdateConfigFile): Promise<void> {
-    const { file: filePath, searchString, insertAbove, newContent, message } = config;
+    const { file, searchString, insertAbove, newContent, message, newFile } = config;
 
-    if (!fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, newContent, 'utf8');
+    if (!fs.existsSync(file)) {
+        fs.writeFileSync(file, newFile, 'utf8');
     } else {
-        let existingContent = fs.readFileSync(filePath, 'utf8');
+        let existingContent = fs.readFileSync(file, 'utf8');
         if (!existingContent.includes(searchString)) {
             const insertIndex = existingContent.lastIndexOf(insertAbove);
             const updatedContent = existingContent.slice(0, insertIndex) + newContent + existingContent.slice(insertIndex);
-            fs.writeFileSync(filePath, updatedContent, 'utf8');
-            vscode.window.showInformationMessage(message || `Configuration added to ${path.basename(filePath)}`);
+            fs.writeFileSync(file, updatedContent, 'utf8');
+            vscode.window.showInformationMessage(message || `Configuration added to ${path.basename(file)}`);
         } else {
             //vscode.window.showInformationMessage(`${path.basename(filePath)} already contains the configuration.`);
         }
