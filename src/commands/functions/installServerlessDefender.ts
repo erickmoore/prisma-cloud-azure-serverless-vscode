@@ -10,7 +10,11 @@ interface ServerlessConfg {
     consoleVersion: object;
 }
 
-export async function installServerlessDefender(serverless: ServerlessConfg) {
+// Function Name: installServerlessDefender 
+// Purpose: Main function that downloads, unzips, and modifies selected files to install defender
+//
+//-------------------------------------------------------------------------
+export default async function installServerlessDefender(serverless: ServerlessConfg) {
     const { projectFile: projectFile, consoleVersion: defenderVersion } = serverless;
 
     const defenderPath = await downloadDefender(serverless); if (!defenderPath){ return; }
@@ -19,8 +23,11 @@ export async function installServerlessDefender(serverless: ServerlessConfg) {
 
 }
 
+
 // Function Name: downloadDefender 
+// Purpose: Writes downloaded file to workspace root
 //
+//-------------------------------------------------------------------------
 async function downloadDefender(serverless: ServerlessConfg) {
     const { context: context, fileContent: fileContent } = serverless;
 
@@ -39,6 +46,10 @@ async function downloadDefender(serverless: ServerlessConfg) {
 
 }
 
+// Function Name: unzipDefender 
+// Purpose: Extracts data from compressed file and writes contents to twistlock_temp/
+//
+//-------------------------------------------------------------------------
 async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) {
     const { context: context } = serverless;
     const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }
@@ -78,8 +89,11 @@ async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) 
     
 }
 
+// Function Name: unzipDefender 
+// Purpose: Extracts data from compressed file and writes contents to twistlock_temp/
+//
+//-------------------------------------------------------------------------
 import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
-
 async function updateSelectProjectFile(projectFile: string, defenderVersion: object) {
 
     const searchString = `<PackageReference Include="Twistlock" Version="${defenderVersion}" />`;
