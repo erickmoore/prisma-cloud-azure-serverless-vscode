@@ -2,23 +2,25 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import getWorkspaceRoot from "../../utilities/getWorkspaceRoot";
-import { makeApiCall, ApiConfig } from '../../utilities/makeApiCalls';
 
-export interface ServerlessConfg {
+interface ServerlessConfg {
     context: vscode.ExtensionContext;
     fileContent: Buffer;
     projectFile: string;
-    consoleVersion: string | object;
+    consoleVersion: object;
 }
 
 export async function installServerlessDefender(serverless: ServerlessConfg) {
+    const { projectFile: projectFile, consoleVersion: defenderVersion } = serverless;
+
     const defenderPath = await downloadDefender(serverless); if (!defenderPath){ return; }
     await unzipDefender(serverless, defenderPath);
-
-    // /api/v1/version
+    await updateSelectProjectFile(projectFile, defenderVersion);
 
 }
 
+// Function Name: downloadDefender 
+//
 async function downloadDefender(serverless: ServerlessConfg) {
     const { context: context, fileContent: fileContent } = serverless;
 
@@ -38,7 +40,7 @@ async function downloadDefender(serverless: ServerlessConfg) {
 }
 
 async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) {
-    const { context: context, fileContent: fileContent } = serverless;
+    const { context: context } = serverless;
     const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }
 
     const unzipper = (await import('unzipper')).default;
@@ -78,18 +80,16 @@ async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) 
 
 import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
 
-async function updateCsprojFile(csprojFile: string, twistlockVersion: string) {
+async function updateSelectProjectFile(projectFile: string, defenderVersion: object) {
 
-
-
-    const searchString = `<PackageReference Include="Twistlock" Version="${twistlockVersion}" />`;
+    const searchString = `<PackageReference Include="Twistlock" Version="${defenderVersion}" />`;
     const insertAbove = '</Project>';
     const newContent = `    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment. -->
     <!-- https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/install/deploy-defender/serverless/serverless -->
     <!-- Start of Prisma Cloud protected section -->
     <ItemGroup>
-        <PackageReference Include="Twistlock" Version="${twistlockVersion}" />
-        <TwistlockFiles Include="twistlock\\*" Exclude="twistlock\\twistlock.${twistlockVersion}.nupkg" />
+        <PackageReference Include="Twistlock" Version="${defenderVersion}" />
+        <TwistlockFiles Include="twistlock\\*" Exclude="twistlock\\twistlock.${defenderVersion}.nupkg" />
     </ItemGroup>
     <ItemGroup>
         <None Include="@(TwistlockFiles)" CopyToOutputDirectory="Always" LinkBase="twistlock\\" />
@@ -98,5 +98,5 @@ async function updateCsprojFile(csprojFile: string, twistlockVersion: string) {
 `;
     const newFile = '<!-- Please create a new project before deploying a Prisma Cloud Defender -->';
 
-    await updateConfig({ file: csprojFile, searchString, insertAbove, newContent, newFile } as UpdateConfigFile);
+    await updateConfig({ file: projectFile, searchString, insertAbove, newContent, newFile } as UpdateConfigFile);
 }
