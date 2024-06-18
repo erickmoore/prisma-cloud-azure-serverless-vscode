@@ -35,20 +35,20 @@
     "configuration": {
       "title": "Prisma Cloud Serverless Defender (Azure)",
       "properties": {
-        "serverlessPrismaCloud.identity": {
+        "PrismaCloudEnt.identity": {
           "type": "string",
           "default": "",
-          "title": "Prisma Cloud Key or User Name",
-          "description": "Prisma Cloud Identity",
+          "title": "Prisma Cloud Identity",
+          "description": "Prisma Cloud Key or User Name",
           "markdownDescription": "Prisma Cloud Identity"
         },
-        "serverlessPrismaCloud.secret": {
+        "PrismaCloudEnt.secret": {
           "type": "string",
           "default": "",
           "description": "Prisma Cloud Secret",
           "markdownDescription": "Prisma Cloud Secret"
         },
-        "serverlessPrismaCloud.console": {
+        "PrismaCloudEnt.console": {
           "type": "string",
           "default": "",
           "description": "Prisma Cloud Console URL",
