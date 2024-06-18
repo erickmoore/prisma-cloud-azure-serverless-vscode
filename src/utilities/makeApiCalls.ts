@@ -14,7 +14,7 @@ export interface ApiConfig {
     body?: any;
 }
 
-export async function makeApiCall(api: ApiConfig){
+export async function makeApiCall(api: ApiConfig) {
     const { url: url, headers: headers, method: method, body: body } = api;
 
     const authValues = await extensionAuthSettings(); if (!extensionAuthSettings) { return; };
@@ -36,13 +36,15 @@ export async function makeApiCall(api: ApiConfig){
     };
 
     if (response.headers.get('content-type')?.includes('application/json')){
-        return response.json();
+        const data = await response.json();
+        return data;
     };
 
+    return;
 }
 
 async function authenticate(prismaCloud: AuthConfig): Promise<string> {
-    const authEndpoint = `${prismaCloud.consolePath}/api/v32.06/authenticate`;
+    const authEndpoint = `${prismaCloud.consolePath}/api/v1/authenticate`;
     const headers = { 'Content-Type': 'application/json; charset=UTF-8' };
     const payload = { username: prismaCloud.identity, password: prismaCloud.secret };
 

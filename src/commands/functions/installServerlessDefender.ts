@@ -2,15 +2,20 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import getWorkspaceRoot from "../../utilities/getWorkspaceRoot";
+import { makeApiCall, ApiConfig } from '../../utilities/makeApiCalls';
 
 export interface ServerlessConfg {
-    context: vscode.ExtensionContext
-    fileContent: Buffer
+    context: vscode.ExtensionContext;
+    fileContent: Buffer;
+    projectFile: string;
+    consoleVersion: string | object;
 }
 
 export async function installServerlessDefender(serverless: ServerlessConfg) {
     const defenderPath = await downloadDefender(serverless); if (!defenderPath){ return; }
     await unzipDefender(serverless, defenderPath);
+
+    // /api/v1/version
 
 }
 
@@ -19,6 +24,8 @@ async function downloadDefender(serverless: ServerlessConfg) {
 
     const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }
     const defenderPath = path.join(context.extensionPath, 'twistlock_serverless_defender.zip');
+
+    if (!fileContent?.buffer) { return; };
 
     fs.writeFileSync(defenderPath, fileContent);
 
@@ -69,3 +76,27 @@ async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) 
     
 }
 
+import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
+
+async function updateCsprojFile(csprojFile: string, twistlockVersion: string) {
+
+
+
+    const searchString = `<PackageReference Include="Twistlock" Version="${twistlockVersion}" />`;
+    const insertAbove = '</Project>';
+    const newContent = `    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment. -->
+    <!-- https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/install/deploy-defender/serverless/serverless -->
+    <!-- Start of Prisma Cloud protected section -->
+    <ItemGroup>
+        <PackageReference Include="Twistlock" Version="${twistlockVersion}" />
+        <TwistlockFiles Include="twistlock\\*" Exclude="twistlock\\twistlock.${twistlockVersion}.nupkg" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="@(TwistlockFiles)" CopyToOutputDirectory="Always" LinkBase="twistlock\\" />
+    </ItemGroup>
+    <!-- End of Prisma Cloud protected section -->
+`;
+    const newFile = '<!-- Please create a new project before deploying a Prisma Cloud Defender -->';
+
+    await updateConfig({ file: csprojFile, searchString, insertAbove, newContent, newFile } as UpdateConfigFile);
+}
