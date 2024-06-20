@@ -156,6 +156,14 @@ export class PrismaCloudAPI {
     public getConsolePath(): string | undefined {
         return this.authConfig?.consolePath;
     }
+    
+    public static async consolePath(): Promise<string | undefined> {
+        const instance = PrismaCloudAPI.getInstance();
+        if (!instance.authConfig) {
+            await instance.fetchAuthConfig();
+        }
+        return instance.getConsolePath();
+    }    
 
     public getIdentity(): string | undefined {
         return this.authConfig?.identity;
@@ -163,10 +171,9 @@ export class PrismaCloudAPI {
 
     public getSecret(): string | undefined {
         return this.authConfig?.secret;
-    }    
+    }   
 
-
-    public getWorkspaceRoot(): string | undefined {
+    public static getWorkspaceRoot(): string | undefined {
         const workspaceFolders = vscode.workspace.workspaceFolders;
 
         if (!workspaceFolders || workspaceFolders.length === 0) {
@@ -176,5 +183,4 @@ export class PrismaCloudAPI {
   
         return workspaceFolders[0].uri.fsPath;
     }
-
 }
