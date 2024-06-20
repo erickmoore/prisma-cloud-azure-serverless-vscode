@@ -1,52 +1,43 @@
 import * as vscode from 'vscode';
-import { authenticate, AuthenticateConfig } from '../utilities/getAuthToken';
-import { getExtensionSettings } from '../utilities/getExtensionSettings';
+import { createInputBox } from '../utilities/inputBox';
+import { PrismaCloudAPI, ApiConfig } from '../utilities/PrismaCloudClient';
+import { storeEnvironmentVariable, EnvironmentConfig } from './functions/createEnvironmentVariable';
 
 export async function createEnvironmentVariable(context: vscode.ExtensionContext) {
-    const prismaCloud = await getExtensionSettings(); if (!prismaCloud) { return; };
-    const { consolePath, identity, secret } = prismaCloud;
+    const prismaCloud = PrismaCloudAPI.getInstance();
 
-    const authConfig: AuthenticateConfig = {
-        consolePath: consolePath,
-        identity: identity,
-        secret: secret
+    const functionNamePrompt = {
+        prompt: 'Enter function name:', 
+        placeHolder: 'myFunction123',
+        title: 'Generate App Service Environment Variable' 
     };
 
-    const appServiceVariableGenerator = `${consolePath}/api/v1/policies/runtime/serverless/encode`;
-    const consoleUrl = new URL(consolePath).hostname;
-    const headers = { 'Content-Type': 'application/json; charset=UTF-8' };
+    const functionName =  await createInputBox(functionNamePrompt); 
 
-    const functionName = await vscode.window.showInputBox({ 
-        prompt: 'Enter function name:', 
-        placeHolder: 'myFunction123', 
-        ignoreFocusOut: true, 
-        title: 'Generate App Service Environment Variable' 
-    }); if (!functionName) { return; }
-
-    const functionInfo = {
-        consoleAddr: consoleUrl,
+    const functionPayload = {
+        consoleAddr: prismaCloud.getConsolePath(),
         function: functionName,
         provider: 'azure'
     };
 
-    const token = await authenticate(authConfig);
+    console.log('Payload: ', functionPayload);
 
-    const variableResponse = await fetch(appServiceVariableGenerator, {
+    const createDefenderVariable: ApiConfig = {
+        apiEndpoint: '/api/v1/policies/runtime/serverless/encode',
+        isFile: false,
+        headers: { 
+            'Content-Type': 'application/json'
+        },
         method: 'POST',
-        headers: { ...headers, authorization: `Bearer ${token}` },
-        body: JSON.stringify(functionInfo)
-    });
+        body: JSON.stringify(functionPayload)
+    };
 
-    const variableData = await variableResponse.json() as { data: string };
+    const appServiceVariable = await prismaCloud.makeApiCall(createDefenderVariable);
 
-    const variableValue = variableData.data;
+    const environmentConfig: EnvironmentConfig = {
+        context: context,
+        variableValue: appServiceVariable
+    };
 
-    if (!variableValue) {
-        vscode.window.showErrorMessage('Error: Failed to retrieve variable value.');
-        return;
-    } 
-
-    await vscode.env.clipboard.writeText(variableValue);
-    context.workspaceState.update('TW_POLICY', variableValue);
-    vscode.window.showInformationMessage('TW_POLICY variable value copied to clipboard.');
+    await storeEnvironmentVariable(environmentConfig);
 }

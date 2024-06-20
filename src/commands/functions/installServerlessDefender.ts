@@ -1,40 +1,39 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as xml2s from 'xml2js';
 import * as path from 'path';
-import getWorkspaceRoot from "../../utilities/getWorkspaceRoot";
+import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
 
-interface ServerlessConfg {
+export interface ServerlessConfg {
     context: vscode.ExtensionContext;
     fileContent: Buffer;
     projectFile: string;
-    consoleVersion: object;
+    consoleVersion: string;
+    workspaceRoot: string;
 }
 
 // Function Name: installServerlessDefender 
 // Purpose: Main function that downloads, unzips, and modifies selected files to install defender
 //
 //-------------------------------------------------------------------------
-export default async function installServerlessDefender(serverless: ServerlessConfg) {
+export async function installServerlessDefender(serverless: ServerlessConfg) {
     const { projectFile: projectFile, consoleVersion: defenderVersion } = serverless;
 
-    const defenderPath = await downloadDefender(serverless); if (!defenderPath){ return; }
+    const defenderPath = await downloadDefender(serverless);
     await unzipDefender(serverless, defenderPath);
     await updateSelectProjectFile(projectFile, defenderVersion);
-
+    await updateNugetConfig(serverless);
 }
-
 
 // Function Name: downloadDefender 
 // Purpose: Writes downloaded file to workspace root
 //
 //-------------------------------------------------------------------------
-async function downloadDefender(serverless: ServerlessConfg) {
-    const { context: context, fileContent: fileContent } = serverless;
+async function downloadDefender(serverless: ServerlessConfg): Promise<string> {
+    const { context: context, fileContent: fileContent, workspaceRoot: workspaceRoot } = serverless;
 
-    const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }
     const defenderPath = path.join(context.extensionPath, 'twistlock_serverless_defender.zip');
-
-    if (!fileContent?.buffer) { return; };
+    if (!fileContent?.buffer) { return ''; };
 
     fs.writeFileSync(defenderPath, fileContent);
 
@@ -51,8 +50,7 @@ async function downloadDefender(serverless: ServerlessConfg) {
 //
 //-------------------------------------------------------------------------
 async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) {
-    const { context: context } = serverless;
-    const workspaceRoot = await getWorkspaceRoot(); if (!workspaceRoot) { return; }
+    const { context, workspaceRoot } = serverless;
 
     const unzipper = (await import('unzipper')).default;
     const extractPath = path.join(context.extensionPath, 'twistlock_temp');
@@ -64,40 +62,54 @@ async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) 
             .on('error', reject);
     });
 
-    if (!fs.existsSync(extractPath)) {
+    try {
+        await fs.promises.access(extractPath);
+    } catch {
         throw new Error('Extraction failed. Directory does not exist.');
     }
 
-    const extractedFiles = fs.readdirSync(extractPath);
+    const extractedFiles = await fs.promises.readdir(extractPath);
     if (extractedFiles.length === 0) {
         throw new Error('Extraction failed. No files found.');
     }
 
     const targetPath = path.join(workspaceRoot, 'twistlock');
 
-    if (fs.existsSync(targetPath)) {
-        fs.rmdirSync(targetPath, { recursive: true });
+    try {
+        await fs.promises.access(targetPath);
+        await fs.promises.rm(targetPath, { recursive: true });
+        console.log('Target directory removed successfully');
+    } catch {
+        // Target path does not exist, no need to remove
     }
 
     const sourcePath = path.join(extractPath, 'twistlock');
-    if (!fs.existsSync(sourcePath)) {
+    try {
+        await fs.promises.access(sourcePath);
+    } catch {
         throw new Error(`Source path does not exist: ${sourcePath}`);
     }
 
-    fs.renameSync(sourcePath, targetPath);
-    fs.rmdirSync(extractPath, { recursive: true });
-    
+    try {
+        await fs.promises.rename(sourcePath, targetPath);
+        console.log('Source directory renamed successfully');
+    } catch {
+        throw new Error(`Error renaming directory`);
+    }
+
+    try {
+        await fs.promises.rm(extractPath, { recursive: true });
+        console.log('Extract directory removed successfully');
+    } catch {
+        console.log('Error removing extract directory');
+    }
 }
 
-// Function Name: unzipDefender 
-// Purpose: Extracts data from compressed file and writes contents to twistlock_temp/
+// Function Name: updateSelectProjectFile 
+// Purpose: Adds package dependencies to the selected csproj project file
 //
 //-------------------------------------------------------------------------
-import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
-async function updateSelectProjectFile(projectFile: string, defenderVersion: object) {
-
-    const searchString = `<PackageReference Include="Twistlock" Version="${defenderVersion}" />`;
-    const insertAbove = '</Project>';
+async function updateSelectProjectFile(projectFile: string, defenderVersion: string) {
     const newContent = `    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment. -->
     <!-- https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/install/deploy-defender/serverless/serverless -->
     <!-- Start of Prisma Cloud protected section -->
@@ -112,5 +124,55 @@ async function updateSelectProjectFile(projectFile: string, defenderVersion: obj
 `;
     const newFile = '<!-- Please create a new project before deploying a Prisma Cloud Defender -->';
 
-    await updateConfig({ file: projectFile, searchString, insertAbove, newContent, newFile } as UpdateConfigFile);
+    await updateConfig({ 
+        file: projectFile, 
+        searchString: `<PackageReference Include="Twistlock" Version="${defenderVersion}" />`, 
+        insertAbove: '</Project>', 
+        newContent: newContent , 
+        newFile: newFile 
+    } as UpdateConfigFile);
+}
+
+// Function Name: updateNugetConfig 
+// Purpose: Adds local package sources for defender
+//
+//-------------------------------------------------------------------------
+export async function updateNugetConfig(serverless: ServerlessConfg) {
+    const { workspaceRoot } = serverless;
+    //const workspaceRoot = await getWorkspaceRoot() as string;
+
+    const nugetFile = path.join(workspaceRoot, 'NuGet.Config');
+    const searchString = '<add key="local-packages" value="./twistlock/" />';
+    const insertAbove = '</configuration>';
+    const newContent = `    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment. -->
+    <!-- https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/install/deploy-defender/serverless/serverless -->
+    <!-- Start of Prisma Cloud protected section -->
+    <packageSources>
+    <clear />
+        <add key="local-packages" value="./twistlock/" />
+        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+    </packageSources>
+    <!-- End of Prisma Cloud protected section -->
+    `;
+
+    const newFile = `<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <!-- This function is protected by Prisma Cloud. Do not remove or modify this comment. -->
+    <!-- https://docs.prismacloud.io/en/enterprise-edition/content-collections/runtime-security/install/deploy-defender/serverless/serverless -->
+    <!-- Start of Prisma Cloud protected section -->
+    <packageSources>
+    <clear />
+        <add key="local-packages" value="./twistlock/" />
+        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+    </packageSources>
+    <!-- End of Prisma Cloud protected section -->
+</configuration>`;
+
+    await updateConfig({ 
+        file: nugetFile, 
+        searchString: searchString, 
+        insertAbove: insertAbove, 
+        newContent: newContent, 
+        newFile: newFile 
+    } as UpdateConfigFile);
 }

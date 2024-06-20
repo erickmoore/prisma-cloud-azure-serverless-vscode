@@ -1,71 +1,31 @@
 import * as vscode from 'vscode';
-import { authenticate, AuthenticateConfig } from '../utilities/getAuthToken';
 import { selectCsprojFile } from './functions/selectCsprojFile';
-import { getExtensionSettings } from '../utilities/getExtensionSettings';
-import { installDefender, InstallDefenderConfig } from './functions/installDefender';
-import { createEnvironmentVariable } from './create-environment-variable';
-import { makeApiCall, ApiConfig } from '../utilities/makeApiCalls';
-import { installServerlessDefender as defenderInstall } from './functions/installServerlessDefender';
+import { PrismaCloudAPI, ApiConfig } from '../utilities/PrismaCloudClient';
+import { installServerlessDefender as defenderInstall, ServerlessConfg } from './functions/installServerlessDefender';
 
 export async function installServerlessDefender(context: vscode.ExtensionContext) {
-    const prismaCloud = await getExtensionSettings(); if (!prismaCloud) { return; };
-    const { consolePath, identity, secret } = prismaCloud;
+    const prismaCloud = PrismaCloudAPI.getInstance();
 
-    const getConsoleVersion: ApiConfig = {
-        url: `${consolePath}/api/v1/version`,
-        headers: { 'Content-Type': 'application/json' },
-        method: 'GET'
-    };
-    
     const downloadServerless: ApiConfig = {
-        url: `${consolePath}/api/v1/defenders/serverless/bundle`,
-        headers: { 'Content-Type': 'application/json' },
+        apiEndpoint: '/api/v1/defenders/serverless/bundle',
+        isFile: true,
+        headers: { 
+            'Content-Type': 'application/json' 
+        },
         method: 'POST',
-        body: { runtime: 'dotnet', provider: 'azure' }
-    };
-    
-    const consoleVersion = await makeApiCall(getConsoleVersion); if (!consoleVersion) { return; };
-    const defenderPackage = await makeApiCall(downloadServerless); 
-    const projectFile = await selectCsprojFile(); if (!projectFile) { return; };
-    
-    if (defenderPackage instanceof Buffer) {
-        const installContent = {
-            context: context,
-            fileContent: defenderPackage,
-            projectFile: projectFile,
-            consoleVersion: consoleVersion
-        };
-
-        await defenderInstall(installContent);
-    }
-
-
-
-// new way above
-
-
-
-
-
-
-
-
-
-    
-    const authConfig: AuthenticateConfig = {
-        consolePath: consolePath,
-        identity: identity,
-        secret: secret
+        body: { 
+            runtime: 'dotnet', 
+            provider: 'azure' 
+        }
     };
 
-    const token = await authenticate(authConfig);
-    const installDefenderConfig: InstallDefenderConfig = {
-        consolePath: prismaCloud.consolePath,
-        token: token,
+    const installContent: ServerlessConfg = {
         context: context,
-        csprojFile: projectFile
+        fileContent: await prismaCloud.makeApiCall(downloadServerless) as Buffer,
+        projectFile: await selectCsprojFile() as string,
+        consoleVersion: await prismaCloud.getConsoleVersion() as string,
+        workspaceRoot: await prismaCloud.getWorkspaceRoot() as string
     };
 
-    await installDefender(installDefenderConfig);
-    await createEnvironmentVariable(context);
+    await defenderInstall(installContent);
 }
