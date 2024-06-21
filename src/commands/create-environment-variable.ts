@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { PrismaCloudAPI, ApiConfig } from '../utilities/PrismaCloudClient';
+import { PrismaCloudAPI, ApiConfig } from '../services/PrismaCloudClient';
 import { storeEnvironmentVariable, EnvironmentConfig } from './functions/createEnvironmentVariable';
-import { Prompts, InputPrompt } from '../utilities/Prompts';
+import { Prompts, InputPrompt } from '../services/Prompts';
 
 export async function createEnvironmentVariable(context: vscode.ExtensionContext) {
     const prismaCloud = PrismaCloudAPI.getInstance();

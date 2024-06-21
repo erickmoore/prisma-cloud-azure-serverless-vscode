@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as xml2s from 'xml2js';
+//import * as xml2s from 'xml2js';
 import * as path from 'path';
 import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
 
@@ -19,7 +19,7 @@ export interface ServerlessConfg {
 export async function installServerlessDefender(serverless: ServerlessConfg) {
     const { projectFile: projectFile, consoleVersion: defenderVersion } = serverless;
 
-    const defenderPath = await downloadDefender(serverless);
+    const defenderPath = await downloadDefender(serverless); if (!defenderPath){ return; };
     await unzipDefender(serverless, defenderPath);
     await updateSelectProjectFile(projectFile, defenderVersion);
     await updateNugetConfig(serverless);
@@ -29,11 +29,13 @@ export async function installServerlessDefender(serverless: ServerlessConfg) {
 // Purpose: Writes downloaded file to workspace root
 //
 //-------------------------------------------------------------------------
-async function downloadDefender(serverless: ServerlessConfg): Promise<string> {
-    const { context: context, fileContent: fileContent, workspaceRoot: workspaceRoot } = serverless;
+async function downloadDefender(serverless: ServerlessConfg): Promise<string | undefined> {
+    const { context: context, fileContent: fileContent } = serverless;
 
     const defenderPath = path.join(context.extensionPath, 'twistlock_serverless_defender.zip');
-    if (!fileContent?.buffer) { return ''; };
+    if (!fileContent?.buffer) { 
+        throw new Error('Unknown error, unable to download file.');
+    };
 
     fs.writeFileSync(defenderPath, fileContent);
 
@@ -42,7 +44,6 @@ async function downloadDefender(serverless: ServerlessConfg): Promise<string> {
     }
 
     return defenderPath;
-
 }
 
 // Function Name: unzipDefender 
@@ -101,7 +102,7 @@ async function unzipDefender(serverless: ServerlessConfg, defenderPath: string) 
         await fs.promises.rm(extractPath, { recursive: true });
         console.log('Extract directory removed successfully');
     } catch {
-        console.log('Error removing extract directory');
+        throw new Error('Error removing extract directory');
     }
 }
 

@@ -35,19 +35,22 @@ export class Prompts {
 
         const selectedFile = await vscode.window.showQuickPick(quickPickItems, { 
             title: title,
-            placeHolder: placeHolder, 
+            placeHolder: placeHolder,
             ignoreFocusOut: true
         });
 
         if (!selectedFile) { 
-            vscode.window.showInformationMessage(`No ${fileExtension} file selected.`);
+            //vscode.window.showInformationMessage(`No ${fileExtension} file selected.`);
+            vscode.window.showInformationMessage(`No ${fileExtension} file selected.`, { modal: true });
             return;
         };
 
-        //const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace('$(file-code) ', ''));
-        const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace(`$(${fileIcon}) `, ''));
-        
-        return returnedFile as string;
+        if (selectedFile) {
+            const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace(`$(${fileIcon}) `, ''));
+            return returnedFile as string;
+        }
+
+        return;
 
      };
 
@@ -65,7 +68,5 @@ export class Prompts {
         if (!inputData) { return; };
 
         return inputData;
-
      }
-
 }

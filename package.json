@@ -21,7 +21,7 @@
     "commands": [
       {
         "command": "extension.install-defender",
-        "title": "Prisma Cloud: Install Serverless Packages"
+        "title": "Prisma Cloud: Install Serverless Defender"
       },
       {
         "command": "extension.create-environment-variable",

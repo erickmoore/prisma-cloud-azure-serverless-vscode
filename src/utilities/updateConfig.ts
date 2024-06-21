@@ -23,7 +23,7 @@ export async function updateConfig(config: UpdateConfigFile): Promise<void> {
             fs.writeFileSync(file, updatedContent, 'utf8');
             vscode.window.showInformationMessage(`Configuration added to ${path.basename(file)}`);
         } else {
-            //vscode.window.showInformationMessage(`${path.basename(filePath)} already contains the configuration.`);
+            console.log(`${path.basename(file)} already contains Defender configuration.`);
         }
     }
 }
