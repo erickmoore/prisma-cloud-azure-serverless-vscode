@@ -14,7 +14,7 @@ export async function completeInstall(context: vscode.ExtensionContext) {
             { 
                 label: 'Generate Defender Key', 
                 picked: true, 
-                iconPath: new vscode.ThemeIcon('zap') ,
+                iconPath: new vscode.ThemeIcon('key') ,
                 detail: 'Generate private key for App Service variable'
             },
             { 
