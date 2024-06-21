@@ -6,6 +6,7 @@ import { FilePrompt, Prompts } from '../services/Prompts';
 export async function installServerlessDefender(context: vscode.ExtensionContext) {
     const prismaCloud = await PrismaCloudAPI.getInstance();
     const filePath = await PrismaCloudAPI.getWorkspaceRoot() as string;
+    const consoleVersion = await prismaCloud.getConsoleVersion() as string;
     const project = new Prompts;
 
     const downloadServerless: ApiConfig = {
@@ -26,17 +27,20 @@ export async function installServerlessDefender(context: vscode.ExtensionContext
         fileExtension: '.csproj',
         fileSearchDirectory: filePath,
         title: 'Select project file',
+        placeHolder: 'select project file...',
         fileIcon: 'file-code'
     };
 
     const selectedProjectFile = await project.filePrompt(promptConfig) as string;
     if (!selectedProjectFile) { return; };
+    const fileContent = await prismaCloud.makeApiCall(downloadServerless) as Buffer;
+    if (!fileContent) { return; };
 
     const installContent: ServerlessConfg = {
         context: context,
-        fileContent: await prismaCloud.makeApiCall(downloadServerless) as Buffer,
-        projectFile: await project.filePrompt(promptConfig) as string,
-        consoleVersion: await prismaCloud.getConsoleVersion() as string,
+        fileContent: fileContent,
+        projectFile: selectedProjectFile,
+        consoleVersion: consoleVersion,
         workspaceRoot: filePath
     };
 

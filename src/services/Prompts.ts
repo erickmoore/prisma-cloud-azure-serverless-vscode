@@ -18,7 +18,6 @@ export interface InputPrompt {
 }
 
 export class Prompts {
-
     public async filePrompt(file: FilePrompt): Promise<string | undefined> {
         const { fileSearchDirectory, fileIcon, fileDescription, fileExtension, title, placeHolder } = file;
         
@@ -40,18 +39,11 @@ export class Prompts {
         });
 
         if (!selectedFile) { 
-            //vscode.window.showInformationMessage(`No ${fileExtension} file selected.`);
-            vscode.window.showInformationMessage(`No ${fileExtension} file selected.`, { modal: true });
             return;
         };
 
-        if (selectedFile) {
-            const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace(`$(${fileIcon}) `, ''));
-            return returnedFile as string;
-        }
-
-        return;
-
+        const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace(`$(${fileIcon}) `, ''));
+        return returnedFile as string;
      };
 
 
@@ -66,7 +58,6 @@ export class Prompts {
         });
 
         if (!inputData) { return; };
-
         return inputData;
      }
 }

@@ -15,20 +15,5 @@ export async function storeEnvironmentVariable(config: EnvironmentConfig){
 
     await vscode.env.clipboard.writeText(variableValue);
     context.workspaceState.update('TW_POLICY', variableValue);
-    vscode.window.showInformationMessage('TW_POLICY variable value copied to clipboard.');
-
+    vscode.window.showInformationMessage('TW_POLICY variable value copied to clipboard.', { detail: 'Ok' });
 }
-
-// export async function createFunctionPayload(functionName: string){
-//     const prismaCloud = await getExtensionSettings(); if (!prismaCloud) { return; };
-//     const { consolePath } = prismaCloud;
-//     const consoleUrl = new URL(consolePath).hostname;
-
-//     const functionPayload = {
-//         consoleAddr: consoleUrl,
-//         function: functionName,
-//         provider: 'azure'
-//     };
-
-//     return functionPayload;
-// }

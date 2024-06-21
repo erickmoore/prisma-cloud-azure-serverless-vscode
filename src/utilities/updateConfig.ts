@@ -21,9 +21,24 @@ export async function updateConfig(config: UpdateConfigFile): Promise<void> {
             const insertIndex = existingContent.lastIndexOf(insertAbove);
             const updatedContent = existingContent.slice(0, insertIndex) + newContent + existingContent.slice(insertIndex);
             fs.writeFileSync(file, updatedContent, 'utf8');
-            vscode.window.showInformationMessage(`Configuration added to ${path.basename(file)}`);
+
+            await showAndCloseMessage(file);
+
+            //vscode.window.showInformationMessage(`Configuration added to ${path.basename(file)}`);
+
+
         } else {
             console.log(`${path.basename(file)} already contains Defender configuration.`);
         }
     }
 }
+
+async function showAndCloseMessage(file: string) {
+    vscode.window.showInformationMessage(`Configuration added to ${path.basename(file)}`);
+    setTimeout(() => {
+        vscode.commands.executeCommand('workbench.action.closeMessages');
+    }, 3000);
+
+};
+
+//'workbench.action.closeMessages'

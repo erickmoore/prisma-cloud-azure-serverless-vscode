@@ -20,7 +20,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.install-defender",
+        "command": "extension.complete-install",
         "title": "Prisma Cloud: Install Serverless Defender"
       },
       {
