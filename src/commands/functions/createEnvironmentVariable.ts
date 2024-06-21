@@ -15,5 +15,17 @@ export async function storeEnvironmentVariable(config: EnvironmentConfig){
 
     await vscode.env.clipboard.writeText(variableValue);
     context.workspaceState.update('TW_POLICY', variableValue);
-    vscode.window.showInformationMessage('TW_POLICY variable value copied to clipboard.', 'OK');
+
+    const selection = await vscode.window.showInformationMessage('Variable created and copied to clipboard.', 'Continue');
+
+    if (selection === 'Continue') {
+        await vscode.env.clipboard.writeText('TW_POLICY');
+        //await context.workspaceState.get('TW_POLICY');
+    // };
+    };
+
+    // if (selection === 'Copy Value') {
+    //     await context.workspaceState.get('TW_POLICY');
+    // };
+
 }

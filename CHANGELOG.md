@@ -18,3 +18,16 @@
 ### Fixed
 
 - Corrected formatting issues with NuGet.Config and csproj files
+
+---
+## [0.0.3]
+
+### Added
+
+- Reduced message noise on success
+- Added some UI styling with icons
+- Added new onboarding workflow
+
+### Fixed
+
+- Re-factored code to make it more readable

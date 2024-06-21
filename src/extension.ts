@@ -5,6 +5,13 @@ import { installServerlessDefender } from './commands/install-defender';
 import { completeInstall } from './commands/complete-install';
 
 export function activate(context: vscode.ExtensionContext): void {
+
+    const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    statusBarItem.text = "Serverless Defender";
+    statusBarItem.command = 'extension.get-environment-variable';
+
+    statusBarItem.show();
+
     context.subscriptions.push(
         vscode.commands.registerCommand('extension.create-environment-variable', () => createEnvironmentVariable(context)),
         vscode.commands.registerCommand('extension.get-environment-variable', () => copyEnvironmentVariable(context)),

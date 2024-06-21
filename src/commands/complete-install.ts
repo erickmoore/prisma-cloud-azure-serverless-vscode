@@ -8,15 +8,21 @@ export async function completeInstall(context: vscode.ExtensionContext) {
             { 
                 label: 'Install Defender', 
                 picked: true, 
-                iconPath: new vscode.ThemeIcon('file-binary'), 
-                detail: 'Download packages and update selected .csproj file'
+                iconPath: new vscode.ThemeIcon('desktop-download'), 
+                detail: 'Download packages and update file imports'
             },
             { 
-                label: 'Generate App Service Variable', 
+                label: 'Generate Defender Key', 
+                picked: true, 
+                iconPath: new vscode.ThemeIcon('zap') ,
+                detail: 'Generate private key for App Service variable'
+            },
+            { 
+                label: 'Create App Service Variable', 
                 picked: true, 
                 iconPath: new vscode.ThemeIcon('variable') ,
-                detail: 'Generate Defender private key for App Service variable'
-            }
+                detail: 'Note: Requires Azure Function Extension from Microsoft'
+            }            
         ],
         {
             canPickMany: true,
@@ -33,7 +39,13 @@ export async function completeInstall(context: vscode.ExtensionContext) {
         await installServerlessDefender(context);
     }
 
-    if (actions.includes('Generate App Service Variable')) {
+    if (actions.includes('Generate Defender Key')) {
         await createEnvironmentVariable(context);
     }
+
+    if (actions.includes('Create App Service Variable')) {
+        await vscode.commands.executeCommand('azureFunctions.appSettings.add');
+    }
 }
+
+// await vscode.commands.executeCommand('azureFunctions.appSettings.add');
