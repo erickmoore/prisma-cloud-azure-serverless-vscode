@@ -21,16 +21,20 @@
     "commands": [
       {
         "command": "extension.complete-install",
-        "title": "Prisma Cloud: Install Serverless Defender"
+        "title": "Prisma Cloud Serverless: Install Serverless Defender"
       },
       {
         "command": "extension.create-environment-variable",
-        "title": "Prisma Cloud: Create App Service Variable"
+        "title": "Prisma Cloud Serverless: Create App Service Variable"
       },
       {
         "command": "extension.get-environment-variable",
-        "title": "Prisma Cloud: Get App Service Variable"
-      }
+        "title": "Prisma Cloud Serverless: Get App Service Variable"
+      },
+      {
+        "command": "extension.reset-workspace-variable",
+        "title": "Prisma Cloud Serverless: Reset Workspace Variable"
+      }      
     ],
     "configuration": {
       "title": "Prisma Cloud Serverless Defender (Azure)",

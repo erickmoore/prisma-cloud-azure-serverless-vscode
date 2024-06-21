@@ -16,16 +16,26 @@ export async function storeEnvironmentVariable(config: EnvironmentConfig){
     await vscode.env.clipboard.writeText(variableValue);
     context.workspaceState.update('TW_POLICY', variableValue);
 
-    const selection = await vscode.window.showInformationMessage('Variable created and copied to clipboard.', 'Continue');
-
-    if (selection === 'Continue') {
-        await vscode.env.clipboard.writeText('TW_POLICY');
-        //await context.workspaceState.get('TW_POLICY');
-    // };
-    };
-
-    // if (selection === 'Copy Value') {
-    //     await context.workspaceState.get('TW_POLICY');
-    // };
+    await statusBarMessages(context);
 
 }
+
+export async function resetWorkspaceVariable(context: vscode.ExtensionContext){
+    context.workspaceState.update('TW_POLICY', undefined);
+    await vscode.window.showInformationMessage('TW_POLICY value removed from workspace', 'OK');
+};
+
+export async function statusBarMessages(context: vscode.ExtensionContext){
+
+    const selection = await vscode.window.showInformationMessage('Variable created and copied to clipboard.', 'Copy Key', 'Copy Value');
+
+    if (selection === 'Copy Key') {
+        await vscode.env.clipboard.writeText('TW_POLICY');
+    };
+
+    if (selection === 'Copy Value') {
+        const variableValue = await context.workspaceState.get('TW_POLICY');
+        await vscode.env.clipboard.writeText(variableValue as string);
+    };
+
+};

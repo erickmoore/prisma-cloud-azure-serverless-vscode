@@ -3,11 +3,13 @@ import { createEnvironmentVariable } from './commands/create-environment-variabl
 import { copyEnvironmentVariable } from './commands/get-environment-variable';
 import { installServerlessDefender } from './commands/install-defender';
 import { completeInstall } from './commands/complete-install';
+import { resetWorkspaceVariable } from './commands/functions/createEnvironmentVariable';
 
 export function activate(context: vscode.ExtensionContext): void {
 
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBarItem.text = "Serverless Defender";
+    statusBarItem.tooltip = "Prisma Cloud Serverless Defender",
     statusBarItem.command = 'extension.get-environment-variable';
 
     statusBarItem.show();
@@ -16,7 +18,8 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand('extension.create-environment-variable', () => createEnvironmentVariable(context)),
         vscode.commands.registerCommand('extension.get-environment-variable', () => copyEnvironmentVariable(context)),
         //vscode.commands.registerCommand('extension.install-defender', () => installServerlessDefender(context)),
-        vscode.commands.registerCommand('extension.complete-install', () => completeInstall(context))
+        vscode.commands.registerCommand('extension.complete-install', () => completeInstall(context)),
+        vscode.commands.registerCommand('extension.reset-workspace-variable', () => resetWorkspaceVariable(context))
     );
 }
 
