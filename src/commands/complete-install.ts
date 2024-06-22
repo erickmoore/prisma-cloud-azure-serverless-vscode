@@ -1,34 +1,12 @@
 import * as vscode from 'vscode';
-import { installServerlessDefender } from './install-defender';
+import { downloadDefender } from './download-defender';
 import { createEnvironmentVariable } from './create-environment-variable';
 import { initializeDefender } from './initialize-defender';
 import { createSampleFunction } from './create-sample-functions';
 
 export async function completeInstall(context: vscode.ExtensionContext) {
-    const azureFunctionsExtensionId = vscode.extensions.getExtension('ms-azuretools.vscode-azurefunctions');
-
-    let createAppServiceVariable = true;
-    if (!azureFunctionsExtensionId) {
-        const install = await vscode.window.showWarningMessage(
-            'Azure Functions extension not detected. You can continue but will need to manually add an App Service variable to complete the installation.',
-            'Continue',
-            'Install Function Extension',
-            'Cancel'
-        );
-
-        if (install === 'Install Function Extension') {
-            vscode.commands.executeCommand('workbench.extensions.search', 'ms-azuretools.vscode-azurefunctions');
-            return;
-        }
-
-        if (install === 'Continue') {
-            createAppServiceVariable = false;
-        }
-
-        if (install === 'Cancel') {
-            return;
-        }
-    };
+    const createAppServiceVariable = await checkAzureServerlessExtension('ms-azuretools.vscode-azurefunctions');
+    if (createAppServiceVariable === undefined) { return; }
 
     const options = await vscode.window.showQuickPick(
         [
@@ -75,7 +53,7 @@ export async function completeInstall(context: vscode.ExtensionContext) {
 
     // Perform actions based on user selection
     if (actions.includes('Install Defender')) {
-        await installServerlessDefender(context);
+        await downloadDefender(context);
     }
 
     if (actions.includes('Initialize Functions')) {
@@ -97,3 +75,31 @@ export async function completeInstall(context: vscode.ExtensionContext) {
     }
 
 }
+
+async function checkAzureServerlessExtension(extensionId: string): Promise<boolean | undefined> {
+    const extensionCheck = vscode.extensions.getExtension(extensionId);
+
+    if (!extensionCheck) {
+        const install = await vscode.window.showWarningMessage(
+            'Azure Functions extension not detected. You can continue but will need to manually add an App Service variable to complete the installation.',
+            'Continue',
+            'Install Function Extension',
+            'Cancel'
+        );
+
+        if (install === 'Install Function Extension') {
+            vscode.commands.executeCommand('workbench.extensions.search', 'ms-azuretools.vscode-azurefunctions');
+            return;
+        }
+
+        if (install === 'Continue') {
+            return false;
+        }
+
+        if (install === 'Cancel') {
+            return;
+        }
+    };
+
+    return true;
+};

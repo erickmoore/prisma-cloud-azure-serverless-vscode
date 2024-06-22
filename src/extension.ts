@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { createEnvironmentVariable } from './commands/create-environment-variable';
 import { copyEnvironmentVariable } from './commands/get-environment-variable';
-import { installServerlessDefender } from './commands/install-defender';
+import { downloadDefender } from './commands/download-defender';
 import { completeInstall } from './commands/complete-install';
 import { resetWorkspaceVariable } from './commands/functions/createEnvironmentVariable';
 import { initializeDefender } from './commands/initialize-defender';
