@@ -38,7 +38,11 @@
       {
         "command": "extension.initialize-defender",
         "title": "Prisma Cloud Serverless: Initialize Serverless Defenders"
-      }
+      },
+      {
+        "command": "extension.create-sample-function",
+        "title": "Prisma Cloud Serverless: Create Sample Functions"
+      }      
     ],
     "configuration": {
       "title": "Prisma Cloud Serverless Defender (Azure)",
@@ -77,6 +81,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
     "@types/vscode": "^1.73.0",
@@ -85,6 +90,7 @@
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0",
     "eslint": "^8.57.0",
+    "fs-extra": "^11.2.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",

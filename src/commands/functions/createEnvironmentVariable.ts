@@ -14,7 +14,7 @@ export async function storeEnvironmentVariable(config: EnvironmentConfig){
     } 
 
     await vscode.env.clipboard.writeText(variableValue);
-    context.workspaceState.update('TW_POLICY', variableValue);
+    await context.workspaceState.update('TW_POLICY', variableValue);
 
     await statusBarMessages(context);
 
@@ -26,7 +26,6 @@ export async function resetWorkspaceVariable(context: vscode.ExtensionContext){
 };
 
 export async function statusBarMessages(context: vscode.ExtensionContext){
-
     const selection = await vscode.window.showInformationMessage('Variable created and copied to clipboard.', 'Copy Key', 'Copy Value');
 
     if (selection === 'Copy Key') {

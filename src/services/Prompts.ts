@@ -19,35 +19,6 @@ export interface InputPrompt {
 }
 
 export class Prompts {
-    // public async filePrompt(file: FilePrompt): Promise<string | undefined> {
-    //     const { fileSearchDirectory, fileIcon, fileDescription, fileExtension, title, placeHolder, pickMultiple } = file;
-        
-    //     let icon: string;
-    //     if (!fileIcon) {  icon = 'file'; };
-    //     if (fileIcon) { icon = fileIcon; };
-
-    //     const files = fs.readdirSync(fileSearchDirectory).filter(file => file.endsWith(fileExtension));
-
-    //     const quickPickItems = files.map(file => ({
-    //         label: `$(${icon}) ${file}`,
-    //         description: fileDescription
-    //     }));
-
-    //     const selectedFile = await vscode.window.showQuickPick(quickPickItems, { 
-    //         title: title,
-    //         placeHolder: placeHolder,
-    //         ignoreFocusOut: true,
-    //         canPickMany: pickMultiple
-    //     });
-
-    //     if (!selectedFile) { 
-    //         return;
-    //     };
-
-    //     const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace(`$(${fileIcon}) `, ''));
-    //     return returnedFile as string;
-    //  };
-
     public async filePrompt(file: FilePrompt): Promise<string[] | undefined> {
         const { fileSearchDirectory, fileIcon, fileDescription, fileExtension, title, placeHolder, pickMultiple } = file;
     

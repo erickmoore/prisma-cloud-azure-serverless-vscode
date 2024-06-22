@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { installServerlessDefender } from './install-defender';
 import { createEnvironmentVariable } from './create-environment-variable';
 import { initializeDefender } from './initialize-defender';
+import { createSampleFunction } from './create-sample-functions';
 
 export async function completeInstall(context: vscode.ExtensionContext) {
     const azureFunctionsExtensionId = vscode.extensions.getExtension('ms-azuretools.vscode-azurefunctions');
@@ -53,6 +54,12 @@ export async function completeInstall(context: vscode.ExtensionContext) {
                 picked: createAppServiceVariable, 
                 iconPath: new vscode.ThemeIcon('variable') ,
                 detail: 'Note: Requires Azure Function Extension from Microsoft'
+            },
+            { 
+                label: 'Create Sample Functions', 
+                picked: false, 
+                iconPath: new vscode.ThemeIcon('file-code'), 
+                detail: 'Create sample functions in project to test Defender'
             }
         ],
         {
@@ -81,4 +88,9 @@ export async function completeInstall(context: vscode.ExtensionContext) {
     if (actions.includes('Create App Service Variable')) {
         await vscode.commands.executeCommand('azureFunctions.appSettings.add');
     }
+
+    if (actions.includes('Create Sample Functions')) {
+        await createSampleFunction(context);
+    }
+
 }

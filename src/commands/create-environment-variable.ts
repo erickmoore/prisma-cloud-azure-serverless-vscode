@@ -5,6 +5,7 @@ import { Prompts, InputPrompt } from '../services/Prompts';
 
 export async function createEnvironmentVariable(context: vscode.ExtensionContext) {
     const prismaCloud = PrismaCloudAPI.getInstance();
+    const consolePath = await prismaCloud.getConsolePath();
     const environmentVariable = new Prompts;
 
     const inputConfig: InputPrompt = {
@@ -21,7 +22,7 @@ export async function createEnvironmentVariable(context: vscode.ExtensionContext
         },
         method: 'POST',
         body: {
-            'consoleAddr': await PrismaCloudAPI.consolePath(),
+            'consoleAddr': consolePath,
             'function': await environmentVariable.inputBox(inputConfig),
             'provider': 'azure'
         }
