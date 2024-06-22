@@ -12,16 +12,17 @@ export async function completeInstall(context: vscode.ExtensionContext) {
         const install = await vscode.window.showWarningMessage(
             'Azure Functions extension not detected. You can continue but will need to manually add an App Service variable to complete the installation.',
             'Continue',
-            'Install',
+            'Install Function Extension',
             'Cancel'
         );
 
-        if (install === 'Continue') {
-            createAppServiceVariable = false;
+        if (install === 'Install Function Extension') {
+            vscode.commands.executeCommand('workbench.extensions.search', 'ms-azuretools.vscode-azurefunctions');
+            return;
         }
 
-        if (install === 'Install') {
-            vscode.commands.executeCommand('workbench.extensions.search', azureFunctionsExtensionId);
+        if (install === 'Continue') {
+            createAppServiceVariable = false;
         }
 
         if (install === 'Cancel') {
@@ -53,7 +54,7 @@ export async function completeInstall(context: vscode.ExtensionContext) {
                 label: 'Create App Service Variable', 
                 picked: createAppServiceVariable, 
                 iconPath: new vscode.ThemeIcon('variable') ,
-                detail: 'Note: Requires Azure Function Extension from Microsoft'
+                detail: 'Use Microsoft Azure Function Extension to create environment variable'
             },
             { 
                 label: 'Create Sample Functions', 
@@ -86,7 +87,9 @@ export async function completeInstall(context: vscode.ExtensionContext) {
     }
 
     if (actions.includes('Create App Service Variable')) {
-        await vscode.commands.executeCommand('azureFunctions.appSettings.add');
+        if (createAppServiceVariable) {
+            await vscode.commands.executeCommand('azureFunctions.appSettings.add');
+         }
     }
 
     if (actions.includes('Create Sample Functions')) {
