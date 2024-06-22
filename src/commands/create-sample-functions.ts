@@ -14,11 +14,13 @@ export async function createSampleFunction(context: vscode.ExtensionContext) {
     const sampleFunctions = [
         {
             label: 'DNS',
-            path: `${filePath}/examples/example-dns.cs`
+            path: `${filePath}/examples/example-dns.cs`,
+            picked: true
         },
         {
             label: 'Proc',
-            path: `${filePath}/examples/example-proc.cs`
+            path: `${filePath}/examples/example-proc.cs`,
+            picked: true
         }
     ];
 
