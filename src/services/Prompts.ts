@@ -8,7 +8,8 @@ export interface FilePrompt {
     fileDescription: string;
     fileExtension: string;
     title: string;
-    placeHolder?: string
+    placeHolder?: string;
+    pickMultiple?: boolean;
 }
 
 export interface InputPrompt {
@@ -18,33 +19,70 @@ export interface InputPrompt {
 }
 
 export class Prompts {
-    public async filePrompt(file: FilePrompt): Promise<string | undefined> {
-        const { fileSearchDirectory, fileIcon, fileDescription, fileExtension, title, placeHolder } = file;
+    // public async filePrompt(file: FilePrompt): Promise<string | undefined> {
+    //     const { fileSearchDirectory, fileIcon, fileDescription, fileExtension, title, placeHolder, pickMultiple } = file;
         
-        let icon: string;
-        if (!fileIcon) {  icon = 'file'; };
-        if (fileIcon) { icon = fileIcon; };
+    //     let icon: string;
+    //     if (!fileIcon) {  icon = 'file'; };
+    //     if (fileIcon) { icon = fileIcon; };
 
+    //     const files = fs.readdirSync(fileSearchDirectory).filter(file => file.endsWith(fileExtension));
+
+    //     const quickPickItems = files.map(file => ({
+    //         label: `$(${icon}) ${file}`,
+    //         description: fileDescription
+    //     }));
+
+    //     const selectedFile = await vscode.window.showQuickPick(quickPickItems, { 
+    //         title: title,
+    //         placeHolder: placeHolder,
+    //         ignoreFocusOut: true,
+    //         canPickMany: pickMultiple
+    //     });
+
+    //     if (!selectedFile) { 
+    //         return;
+    //     };
+
+    //     const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace(`$(${fileIcon}) `, ''));
+    //     return returnedFile as string;
+    //  };
+
+    public async filePrompt(file: FilePrompt): Promise<string[] | undefined> {
+        const { fileSearchDirectory, fileIcon, fileDescription, fileExtension, title, placeHolder, pickMultiple } = file;
+    
+        const icon = fileIcon || 'file';
+        const pickOption = pickMultiple || true ;
+    
         const files = fs.readdirSync(fileSearchDirectory).filter(file => file.endsWith(fileExtension));
-
+    
         const quickPickItems = files.map(file => ({
             label: `$(${icon}) ${file}`,
-            description: fileDescription
+            description: fileDescription,
+            picked: true
         }));
-
-        const selectedFile = await vscode.window.showQuickPick(quickPickItems, { 
+    
+        const selectedFiles = await vscode.window.showQuickPick(quickPickItems, {
             title: title,
             placeHolder: placeHolder,
-            ignoreFocusOut: true
+            ignoreFocusOut: true,
+            canPickMany: pickOption
         });
-
-        if (!selectedFile) { 
+    
+        if (!selectedFiles) {
             return;
-        };
-
-        const returnedFile = path.join(fileSearchDirectory, selectedFile.label.replace(`$(${fileIcon}) `, ''));
-        return returnedFile as string;
-     };
+        }
+    
+        // Ensure selectedFiles is always an array
+        const selectedFilesArray = Array.isArray(selectedFiles) ? selectedFiles : [selectedFiles];
+    
+        const returnedFiles = selectedFilesArray.map(selectedFile => 
+            path.join(fileSearchDirectory, selectedFile.label.replace(`$(${icon}) `, ''))
+        );
+    
+        return returnedFiles;
+    }
+    
 
 
      public async inputBox(inputConfg: InputPrompt): Promise<string | undefined> {

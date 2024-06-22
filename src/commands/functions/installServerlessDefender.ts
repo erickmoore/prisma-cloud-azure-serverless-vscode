@@ -7,7 +7,7 @@ import { updateConfig, UpdateConfigFile } from '../../utilities/updateConfig';
 export interface ServerlessConfg {
     context: vscode.ExtensionContext;
     fileContent: Buffer;
-    projectFile: string;
+    projectFile: string[];
     consoleVersion: string;
     workspaceRoot: string;
 }
@@ -21,7 +21,7 @@ export async function installServerlessDefender(serverless: ServerlessConfg) {
 
     const defenderPath = await downloadDefender(serverless); if (!defenderPath){ return; };
     await unzipDefender(serverless, defenderPath);
-    await updateSelectProjectFile(projectFile, defenderVersion);
+    await updateSelectProjectFile(projectFile[0], defenderVersion);
     await updateNugetConfig(serverless);
 }
 

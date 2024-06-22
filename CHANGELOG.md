@@ -31,3 +31,13 @@
 ### Fixed
 
 - Re-factored code to make it more readable
+
+---
+## [0.1.0]
+
+### Added
+
+- Use Azure Functions Extension to prompt for function app to create variable
+- Added the ability to select files to instrument after installation
+- Added status bar context to allow variable selection
+- Added new command that will initialize Defender based on selected .CS files

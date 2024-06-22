@@ -1,8 +1,33 @@
 import * as vscode from 'vscode';
 import { installServerlessDefender } from './install-defender';
 import { createEnvironmentVariable } from './create-environment-variable';
+import { initializeDefender } from './initialize-defender';
 
 export async function completeInstall(context: vscode.ExtensionContext) {
+    const azureFunctionsExtensionId = vscode.extensions.getExtension('ms-azuretools.vscode-azurefunctions');
+
+    let createAppServiceVariable = true;
+    if (!azureFunctionsExtensionId) {
+        const install = await vscode.window.showWarningMessage(
+            'Azure Functions extension not detected. You can continue but will need to manually add an App Service variable to complete the installation.',
+            'Continue',
+            'Install',
+            'Cancel'
+        );
+
+        if (install === 'Continue') {
+            createAppServiceVariable = false;
+        }
+
+        if (install === 'Install') {
+            vscode.commands.executeCommand('workbench.extensions.search', azureFunctionsExtensionId);
+        }
+
+        if (install === 'Cancel') {
+            return;
+        }
+    };
+
     const options = await vscode.window.showQuickPick(
         [
             { 
@@ -12,6 +37,12 @@ export async function completeInstall(context: vscode.ExtensionContext) {
                 detail: 'Download packages and update file imports'
             },
             { 
+                label: 'Initialize Functions', 
+                picked: true, 
+                iconPath: new vscode.ThemeIcon('zap'), 
+                detail: 'Choose functions to initialize with Defender'
+            },            
+            { 
                 label: 'Generate Defender Key', 
                 picked: true, 
                 iconPath: new vscode.ThemeIcon('key') ,
@@ -19,10 +50,10 @@ export async function completeInstall(context: vscode.ExtensionContext) {
             },
             { 
                 label: 'Create App Service Variable', 
-                picked: true, 
+                picked: createAppServiceVariable, 
                 iconPath: new vscode.ThemeIcon('variable') ,
                 detail: 'Note: Requires Azure Function Extension from Microsoft'
-            }            
+            }
         ],
         {
             canPickMany: true,
@@ -39,6 +70,10 @@ export async function completeInstall(context: vscode.ExtensionContext) {
         await installServerlessDefender(context);
     }
 
+    if (actions.includes('Initialize Functions')) {
+        await initializeDefender();
+    }
+
     if (actions.includes('Generate Defender Key')) {
         await createEnvironmentVariable(context);
     }
@@ -47,5 +82,3 @@ export async function completeInstall(context: vscode.ExtensionContext) {
         await vscode.commands.executeCommand('azureFunctions.appSettings.add');
     }
 }
-
-// await vscode.commands.executeCommand('azureFunctions.appSettings.add');

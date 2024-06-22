@@ -174,6 +174,7 @@ export class PrismaCloudAPI {
     }   
 
     public static getWorkspaceRoot(): string | undefined {
+        PrismaCloudAPI.getInstance();
         const workspaceFolders = vscode.workspace.workspaceFolders;
 
         if (!workspaceFolders || workspaceFolders.length === 0) {

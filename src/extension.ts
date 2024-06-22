@@ -4,6 +4,7 @@ import { copyEnvironmentVariable } from './commands/get-environment-variable';
 import { installServerlessDefender } from './commands/install-defender';
 import { completeInstall } from './commands/complete-install';
 import { resetWorkspaceVariable } from './commands/functions/createEnvironmentVariable';
+import { initializeDefender } from './commands/initialize-defender';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -19,7 +20,8 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand('extension.get-environment-variable', () => copyEnvironmentVariable(context)),
         //vscode.commands.registerCommand('extension.install-defender', () => installServerlessDefender(context)),
         vscode.commands.registerCommand('extension.complete-install', () => completeInstall(context)),
-        vscode.commands.registerCommand('extension.reset-workspace-variable', () => resetWorkspaceVariable(context))
+        vscode.commands.registerCommand('extension.reset-workspace-variable', () => resetWorkspaceVariable(context)),
+        vscode.commands.registerCommand('extension.initialize-defender', () => initializeDefender())
     );
 }
 

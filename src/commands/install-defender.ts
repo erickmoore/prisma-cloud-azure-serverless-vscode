@@ -28,10 +28,11 @@ export async function installServerlessDefender(context: vscode.ExtensionContext
         fileSearchDirectory: filePath,
         title: 'Select project file',
         placeHolder: 'select project file...',
-        fileIcon: 'file-code'
+        fileIcon: 'file-code',
+        pickMultiple: false
     };
 
-    const selectedProjectFile = await project.filePrompt(promptConfig) as string;
+    const selectedProjectFile = await project.filePrompt(promptConfig) as string[];
     if (!selectedProjectFile) { return; };
     
     const fileContent = await prismaCloud.makeApiCall(downloadServerless) as Buffer;
