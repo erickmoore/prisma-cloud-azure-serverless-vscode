@@ -106,7 +106,7 @@ export class PrismaCloudAPI {
         console.log('Console version:', this.consoleVersion);
     }
 
-    public async makeApiCall(api: ApiConfig): Promise<object | Buffer | undefined> {
+    public async makeApiCall(api: ApiConfig): Promise<object | Buffer | string | undefined> {
         if (!this.authToken) {
             await this.authenticate();
         }
@@ -174,7 +174,7 @@ export class PrismaCloudAPI {
     }   
 
     public static getWorkspaceRoot(): string | undefined {
-        PrismaCloudAPI.getInstance();
+        //PrismaCloudAPI.getInstance();
         const workspaceFolders = vscode.workspace.workspaceFolders;
 
         if (!workspaceFolders || workspaceFolders.length === 0) {

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Company.Function
 {
@@ -18,12 +18,15 @@ namespace Company.Function
 
         [Function("Proc")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
         {
             Twistlock.Serverless.Init(_logger);
 
-            string command = req.Query["command"];
-            string args = req.Query["args"];
+            string urlParameter1 = "command";
+            string command = req.Query[urlParameter1].ToString();
+
+            string urlParameter2 = "args";
+            string args = req.Query[urlParameter2].ToString();
 
             if (string.IsNullOrEmpty(command))
             {
@@ -35,20 +38,27 @@ namespace Company.Function
             {
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
-                    FileName = command,
-                    Arguments = args,
+                    FileName = command ?? throw new ArgumentNullException(nameof(command)),
+                    Arguments = args ?? string.Empty,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
 
-                using (Process process = Process.Start(psi))
+                Process? process = Process.Start(psi);
+                if (process == null)
+                {
+                    _logger.LogError("Process start failed");
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                }
+
+                using (process)
                 {
                     string output = await process.StandardOutput.ReadToEndAsync();
                     string error = await process.StandardError.ReadToEndAsync();
 
-                    process.WaitForExit();
+                    await process.WaitForExitAsync();
 
                     // Log the error if any
                     if (!string.IsNullOrEmpty(error))
@@ -57,8 +67,8 @@ namespace Company.Function
                     }
 
                     // Replace \r\n with actual newlines
-                    string formattedOutput = output.Replace("\r\n",Environment.NewLine);
-            
+                    string formattedOutput = output.Replace("\r\n", Environment.NewLine);
+
                     return new OkObjectResult(formattedOutput)
                     {
                         ContentTypes = { "text/plain" }

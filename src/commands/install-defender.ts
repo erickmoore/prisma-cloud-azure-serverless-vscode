@@ -1,10 +1,16 @@
 import * as vscode from 'vscode';
-import { downloadDefender } from './download-defender';
-import { createEnvironmentVariable } from './create-environment-variable';
+import { createEnvironmentVariable } from './environment-variables';
 import { initializeDefender } from './initialize-defender';
 import { createSampleFunction } from './create-sample-functions';
+import { downloadDefender } from './download-defender';
+import { updateProjectFiles } from './update-files';
 
-export async function completeInstall(context: vscode.ExtensionContext) {
+// Main Function:      [ installDefender ]
+// Private Functions:  [ checkAzureServerlessExtension ]
+// Exported Functions: [ installDefender ]
+//
+
+export async function installDefender(context: vscode.ExtensionContext) {
     const createAppServiceVariable = await checkAzureServerlessExtension('ms-azuretools.vscode-azurefunctions');
     if (createAppServiceVariable === undefined) { return; }
 
@@ -54,6 +60,7 @@ export async function completeInstall(context: vscode.ExtensionContext) {
     // Perform actions based on user selection
     if (actions.includes('Install Defender')) {
         await downloadDefender(context);
+        await updateProjectFiles();
     }
 
     if (actions.includes('Initialize Functions')) {
@@ -76,6 +83,12 @@ export async function completeInstall(context: vscode.ExtensionContext) {
 
 }
 
+// Function:    checkAzureServerlessExtension
+// Parameters:  [ extensionId: string]
+// Calls:       none
+// Returns:     [ bool or undefined ]
+// Purpose:     Checks for Microsoft Azure Function VS Code extension
+//
 async function checkAzureServerlessExtension(extensionId: string): Promise<boolean | undefined> {
     const extensionCheck = vscode.extensions.getExtension(extensionId);
 

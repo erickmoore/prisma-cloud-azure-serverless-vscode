@@ -3,13 +3,14 @@ import * as path from 'path';
 import * as fse from 'fs-extra';
 import { PrismaCloudAPI } from '../services/PrismaCloudClient';
 
+// Main Function:      createSampleFunction
+// Private Functions:  none
+// Exported Functions: createSampleFunction
+//
+
 export async function createSampleFunction(context: vscode.ExtensionContext) {
     const filePath = context.extensionPath;
-    const workspacePath = await PrismaCloudAPI.getWorkspaceRoot();
-
-    if (!workspacePath) {
-        return;
-    }
+    const workspacePath = await PrismaCloudAPI.getWorkspaceRoot(); if (!workspacePath) { return; };
 
     const sampleFunctions = [
         {

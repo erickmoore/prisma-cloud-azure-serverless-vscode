@@ -24,7 +24,9 @@ namespace Company.Function
             // Initialize Serverless Defender
             Twistlock.Serverless.Init(_logger);
 
-            string site = req.Query["site"];
+            string urlParameter = "site";
+
+            string site = req.Query[urlParameter].ToString();
 
             if (string.IsNullOrEmpty(site)){ site = "https://www.google.com"; }
             if (!site.StartsWith("https://")) { site = "https://" + site; }

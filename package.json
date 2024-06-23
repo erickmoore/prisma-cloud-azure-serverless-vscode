@@ -1,11 +1,15 @@
 {
   "name": "prisma-cloud-defender",
   "publisher": "ErickMoore",
+  "author": { 
+    "name": "Erick Moore"
+  },
+  "contributors": [ "Erick Moore", "ChatGPT 4" ],
   "preview": true,
   "private": true,
   "displayName": "Prisma Cloud Serverless Defender (Azure)",
   "description": "Deploy Prisma Cloud Serverless Defender",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "engines": {
     "vscode": "^1.73.0"
   },
@@ -20,7 +24,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.complete-install",
+        "command": "extension.install-defender",
         "title": "Prisma Cloud Serverless: Install Serverless Defender"
       },
       {

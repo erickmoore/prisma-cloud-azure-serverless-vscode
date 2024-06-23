@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { createEnvironmentVariable } from './commands/create-environment-variable';
-import { copyEnvironmentVariable } from './commands/get-environment-variable';
+import { createEnvironmentVariable, resetWorkspaceVariable, copyEnvironmentVariable } from './commands/environment-variables';
+//import { copyEnvironmentVariable } from './commands/get-environment-variable';
+//import { downloadDefender } from './commands/download-defender';
 import { downloadDefender } from './commands/download-defender';
-import { completeInstall } from './commands/complete-install';
-import { resetWorkspaceVariable } from './commands/functions/createEnvironmentVariable';
+import { installDefender } from './commands/install-defender';
 import { initializeDefender } from './commands/initialize-defender';
 import { createSampleFunction } from './commands/create-sample-functions';
 
@@ -19,13 +19,11 @@ export function activate(context: vscode.ExtensionContext): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('extension.create-environment-variable', () => createEnvironmentVariable(context)),
         vscode.commands.registerCommand('extension.get-environment-variable', () => copyEnvironmentVariable(context)),
-        //vscode.commands.registerCommand('extension.install-defender', () => installServerlessDefender(context)),
-        vscode.commands.registerCommand('extension.complete-install', () => completeInstall(context)),
+        vscode.commands.registerCommand('extension.install-defender', () => installDefender(context)),
+        vscode.commands.registerCommand('extension.download-defender', () => downloadDefender(context)),
         vscode.commands.registerCommand('extension.reset-workspace-variable', () => resetWorkspaceVariable(context)),
         vscode.commands.registerCommand('extension.initialize-defender', () => initializeDefender()),
         vscode.commands.registerCommand('extension.create-sample-function', () => createSampleFunction(context))
-
-        //createSampleFunction
     );
 }
 
