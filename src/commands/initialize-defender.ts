@@ -57,7 +57,7 @@ async function initializeServerlessDefender(functionFiles: string[]) {
         }
 
         // Define regex to match methods with the 'Function' attribute and capture indentation
-        const regex = /(\[Function\(".*?"\)\]\s*public .*?\s+.*?\(.*?\)\s*\{)\s*([\n\r]?[ \t]*)/g;
+        const regex = /(\[Function\(".*?"\)\]\s*public\s+.*?\s+Run\s*\([\s\S]*?\)\s*\{)\s*([\n\r]?[ \t]*)/gm;
 
         // Check if the pattern is found
         if (!regex.test(fileContent)) {

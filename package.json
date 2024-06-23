@@ -9,7 +9,7 @@
   "private": true,
   "displayName": "Prisma Cloud Serverless Defender (Azure)",
   "description": "Deploy Prisma Cloud Serverless Defender",
-  "version": "0.2.1",
+  "version": "0.4.3",
   "engines": {
     "vscode": "^1.73.0"
   },
@@ -24,27 +24,27 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.install-defender",
+        "command": "pcasd.install-defender",
         "title": "Prisma Cloud Serverless: Install Serverless Defender"
       },
       {
-        "command": "extension.create-environment-variable",
+        "command": "pcasd.create-environment-variable",
         "title": "Prisma Cloud Serverless: Create App Service Variable"
       },
       {
-        "command": "extension.get-environment-variable",
+        "command": "pcasd.get-environment-variable",
         "title": "Prisma Cloud Serverless: Get App Service Variable"
-      },
+      },    
       {
-        "command": "extension.reset-workspace-variable",
+        "command": "pcasd.reset-workspace-variable",
         "title": "Prisma Cloud Serverless: Reset Workspace Variable"
       },
       {
-        "command": "extension.initialize-defender",
+        "command": "pcasd.initialize-defender",
         "title": "Prisma Cloud Serverless: Initialize Serverless Defenders"
       },
       {
-        "command": "extension.create-sample-function",
+        "command": "pcasd.create-sample-function",
         "title": "Prisma Cloud Serverless: Create Sample Functions"
       }      
     ],
