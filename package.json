@@ -1,0 +1,114 @@
+{
+  "name": "prisma-cloud-defender",
+  "publisher": "ErickMoore",
+  "author": { 
+    "name": "Erick Moore"
+  },
+  "contributors": [ "Erick Moore", "ChatGPT 4" ],
+  "preview": true,
+  "private": true,
+  "displayName": "Prisma Cloud Serverless Defender (Azure)",
+  "description": "Deploy Prisma Cloud Serverless Defender",
+  "version": "0.4.0",
+  "repository": {
+    "url": "https://github.com/erickmoore/prisma-cloud-azure-serverless-vscode"
+  },
+  "license": "ISC",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "icon": "images/icon.png",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pcasd.install-defender",
+        "title": "Prisma Cloud Serverless: Install Serverless Defender"
+      },
+      {
+        "command": "pcasd.create-environment-variable",
+        "title": "Prisma Cloud Serverless: Create App Service Variable"
+      },
+      {
+        "command": "pcasd.get-environment-variable",
+        "title": "Prisma Cloud Serverless: Get App Service Variable"
+      },    
+      {
+        "command": "pcasd.reset-workspace-variable",
+        "title": "Prisma Cloud Serverless: Reset Workspace Variable"
+      },
+      {
+        "command": "pcasd.initialize-defender",
+        "title": "Prisma Cloud Serverless: Initialize Serverless Defenders"
+      },
+      {
+        "command": "pcasd.create-sample-function",
+        "title": "Prisma Cloud Serverless: Create Sample Functions"
+      }      
+    ],
+    "configuration": {
+      "title": "Prisma Cloud Serverless Defender (Azure)",
+      "properties": {
+        "PrismaCloudEnt.identity": {
+          "type": "string",
+          "default": "",
+          "title": "Prisma Cloud Identity",
+          "description": "Prisma Cloud Key or User Name",
+          "markdownDescription": "Prisma Cloud Identity"
+        },
+        "PrismaCloudEnt.secret": {
+          "type": "string",
+          "default": "",
+          "description": "Prisma Cloud Secret",
+          "markdownDescription": "Prisma Cloud Secret"
+        },
+        "PrismaCloudEnt.console": {
+          "type": "string",
+          "default": "",
+          "description": "Prisma Cloud Console URL",
+          "markdownDescription": "Prisma Cloud Console URL"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.73.0",
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "@typescript-eslint/parser": "^7.11.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0",
+    "eslint": "^8.57.0",
+    "fs-extra": "^11.2.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@types/xml2js": "^0.4.14",
+    "axios": "^1.7.2",
+    "node-fetch": "^3.3.2",
+    "unzipper": "^0.12.1",
+    "xml2js": "^0.6.2"
+  }
+}
