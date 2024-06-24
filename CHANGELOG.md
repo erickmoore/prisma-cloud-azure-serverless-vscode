@@ -16,3 +16,9 @@
     - Optionally use Microsoft Azure Functions extension to prompt for key: value pair for TW_POLICY
 - Optionally create 2 sample functions in project root
 - Expose commands to execute most commands above
+
+## [0.4.1]
+
+### Fixed
+
+- Corrected issue when trying to create TW_POLICY variable when none is found

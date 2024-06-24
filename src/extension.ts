@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
         //vscode.commands.registerCommand('pcasd.download-defender', () => downloadDefender(context)),
         vscode.commands.registerCommand('pcasd.reset-workspace-variable', () => resetWorkspaceVariable(context)),
         vscode.commands.registerCommand('pcasd.initialize-defender', () => initializeDefender()),
-        vscode.commands.registerCommand('pcasd.create-sample-function', () => createSampleFunction(context))
+        vscode.commands.registerCommand('pcasd.create-sample-function', () => createSampleFunction(context)),
     );
 }
 
