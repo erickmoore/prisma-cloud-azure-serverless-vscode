@@ -9,7 +9,7 @@
   "private": true,
   "displayName": "Prisma Cloud Serverless Defender (Azure)",
   "description": "Deploy Prisma Cloud Serverless Defender",
-  "version": "0.4.3",
+  "version": "0.4.0",
   "engines": {
     "vscode": "^1.73.0"
   },
