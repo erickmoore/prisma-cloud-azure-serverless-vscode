@@ -1,12 +1,17 @@
-import * as fs from 'fs';
-import { PrismaCloudAPI } from '../services/PrismaCloudClient';
-import { FilePrompt, Prompts } from '../services/Prompts';
-
 // Main Function:      [ initializeDefender ]
 // Private Functions:  [ initializeServerlessDefender ]
 // Exported Functions: [ initializeDefender ]
 //
+import * as fs from 'fs';
+import { PrismaCloudAPI } from '../services/PrismaCloudClient';
+import { FilePrompt, Prompts } from '../services/Prompts';
 
+// Function:    initializeDefender
+// Parameters:  none
+// Calls:       initializeServerlessDefender
+// Returns:     none
+// Purpose:     Creates VSCode prompt to select .cs files to initialize defender in code
+//
 export async function initializeDefender() {
     const filePath = await PrismaCloudAPI.getWorkspaceRoot() as string;
     const project = new Prompts;
@@ -48,7 +53,7 @@ async function initializeServerlessDefender(functionFiles: string[]) {
 
         if (fileContent.includes('Twistlock.Serverless.Init(_logger);')) { 
             console.log(`File: ${file} already containst Serverless config`);
-            return; 
+            continue; 
         };
 
         if (!fileContent) {

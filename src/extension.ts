@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { createEnvironmentVariable, resetWorkspaceVariable, copyEnvironmentVariable } from './commands/environment-variables';
+import { createEnvironmentVariable, resetWorkspaceVariable, getEnvironmentVariable } from './commands/status-bar';
 import { downloadDefender } from './commands/download-defender';
 import { installDefender } from './commands/install-defender';
 import { initializeDefender } from './commands/initialize-defender';
@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('pcasd.install-defender', () => installDefender(context)),
         vscode.commands.registerCommand('pcasd.create-environment-variable', () => createEnvironmentVariable(context)),
-        vscode.commands.registerCommand('pcasd.get-environment-variable', () => copyEnvironmentVariable(context)),
+        vscode.commands.registerCommand('pcasd.get-environment-variable', () => getEnvironmentVariable(context)),
         //vscode.commands.registerCommand('pcasd.download-defender', () => downloadDefender(context)),
         vscode.commands.registerCommand('pcasd.reset-workspace-variable', () => resetWorkspaceVariable(context)),
         vscode.commands.registerCommand('pcasd.initialize-defender', () => initializeDefender()),

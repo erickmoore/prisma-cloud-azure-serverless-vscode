@@ -1,15 +1,21 @@
+// Main Function:       [ installDefender ]
+// Imported Functions:  [ downloadDefender, updateProjectFiles, initializeDefender, createSampleFunction ]
+// Private Functions:   [ checkAzureServerlessExtension ]
+// Exported Functions:  [ installDefender ]
+
 import * as vscode from 'vscode';
-import { createEnvironmentVariable } from './environment-variables';
+import { createEnvironmentVariable } from './status-bar';
 import { initializeDefender } from './initialize-defender';
 import { createSampleFunction } from './create-sample-functions';
 import { downloadDefender } from './download-defender';
 import { updateProjectFiles } from './update-files';
 
-// Main Function:      [ installDefender ]
-// Private Functions:  [ checkAzureServerlessExtension ]
-// Exported Functions: [ installDefender ]
+// Function:    installDefender
+// Parameters:  [ context: vscode.ExtensionContext ]
+// Calls:       [ downloadDefender, updateProjectFiles, initializeDefender, createSampleFunction ] Dependent on user selection
+// Returns:     [ none ]
+// Purpose:     Provide list of options for a user to install and initialize Serverless Defender
 //
-
 export async function installDefender(context: vscode.ExtensionContext) {
     const createAppServiceVariable = await checkAzureServerlessExtension('ms-azuretools.vscode-azurefunctions');
     if (createAppServiceVariable === undefined) { return; }

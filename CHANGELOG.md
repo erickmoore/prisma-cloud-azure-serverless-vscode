@@ -19,6 +19,11 @@
 
 ## [0.4.1]
 
+### Added
+
+- Internal code documentation
+
 ### Fixed
 
 - Corrected issue when trying to create TW_POLICY variable when none is found
+- Initializing Defender could stop processing if a file was detected that had already been initialized
