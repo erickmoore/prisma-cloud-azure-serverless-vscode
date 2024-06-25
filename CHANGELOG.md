@@ -16,3 +16,14 @@
     - Optionally use Microsoft Azure Functions extension to prompt for key: value pair for TW_POLICY
 - Optionally create 2 sample functions in project root
 - Expose commands to execute most commands above
+
+## [0.4.1]
+
+### Added
+
+- Internal code documentation
+
+### Fixed
+
+- Corrected issue when trying to create TW_POLICY variable when none is found
+- Initializing Defender could stop processing if a file was detected that had already been initialized

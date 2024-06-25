@@ -1,12 +1,11 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-import { PrismaCloudAPI, ApiConfig } from '../services/PrismaCloudClient';
-
 // Main Function:      [ downloadDefender ]
 // Private Functions:  [ downloadFile, unzipFile ]
 // Exported Functions: [ downloadDefender ]
 //
+import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+import { PrismaCloudAPI, ApiConfig } from '../services/PrismaCloudClient';
 
 export interface DefenderDownload {
     context: vscode.ExtensionContext;
@@ -20,6 +19,12 @@ interface ExtractDefender {
     defenderPath: string;
 }
 
+// Function:    downloadDefender
+// Parameters:  [ context: vscode.ExtensionContext ]
+// Calls:       [ makeApiCall, downloadFile ]
+// Returns:     none
+// Purpose:     Downloads Serverless Defender in project root and extracts to twistlock/
+//
 export async function downloadDefender(context: vscode.ExtensionContext) {
     const prismaCloud = await PrismaCloudAPI.getInstance();
     const searchPath = PrismaCloudAPI.getWorkspaceRoot() as string; if (!searchPath) { return; };

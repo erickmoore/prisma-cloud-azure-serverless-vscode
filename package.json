@@ -9,7 +9,7 @@
   "private": true,
   "displayName": "Prisma Cloud Serverless Defender (Azure)",
   "description": "Deploy Prisma Cloud Serverless Defender",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "repository": {
     "url": "https://github.com/erickmoore/prisma-cloud-azure-serverless-vscode"
   },

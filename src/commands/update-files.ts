@@ -1,12 +1,11 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { PrismaCloudAPI } from '../services/PrismaCloudClient';
-import { FilePrompt, Prompts } from '../services/Prompts';
-
 // Main Function:      [ updateProjectFiles ]
 // Private Functions:  [ updateSelectProjectFile, updateNugetConfig, updateConfig ]
 // Exported Functions: [ updateProjectFiles ]
 //
+import * as fs from 'fs';
+import * as path from 'path';
+import { PrismaCloudAPI } from '../services/PrismaCloudClient';
+import { FilePrompt, Prompts } from '../services/Prompts';
 
 interface UpdateFileConfig {
     file: string;
@@ -16,6 +15,12 @@ interface UpdateFileConfig {
     newFile: string;
 }
 
+// Function:    updateProjectFiles
+// Parameters:  none
+// Calls:       [ updateSelectProjectFile, updateNugetConfig ]
+// Returns:     none
+// Purpose:     Creates VSCode prompt to select .csproj file and create/modify NuGet.Config to install dependecies
+//
 export async function updateProjectFiles() {
     const prismaCloud = await PrismaCloudAPI.getInstance();
     const filePath = PrismaCloudAPI.getWorkspaceRoot() as string; if (!filePath) { return; };

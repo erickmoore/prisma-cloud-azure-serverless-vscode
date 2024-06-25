@@ -1,13 +1,18 @@
+// Main Function:      createSampleFunction
+// Private Functions:  none
+// Exported Functions: createSampleFunction
+//
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import { PrismaCloudAPI } from '../services/PrismaCloudClient';
 
-// Main Function:      createSampleFunction
-// Private Functions:  none
-// Exported Functions: createSampleFunction
+// Function:    createSampleFunction
+// Parameters:  none
+// Calls:       none
+// Returns:     none
+// Purpose:     Copies selected sample functions to project root
 //
-
 export async function createSampleFunction(context: vscode.ExtensionContext) {
     const filePath = context.extensionPath;
     const workspacePath = await PrismaCloudAPI.getWorkspaceRoot(); if (!workspacePath) { return; };
